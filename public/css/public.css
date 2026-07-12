@@ -149,7 +149,7 @@ a { color: inherit; text-decoration: none; }
   padding: 120px 24px 80px;
   position: relative;
   overflow: hidden;
-  background-image: linear-gradient(to bottom, rgba(10, 12, 8, 0.65) 0%, rgba(10, 12, 8, 0.25) 60%, var(--bg) 100%), url('../hero-bg.jpg');
+  background-image: linear-gradient(to bottom, rgba(10, 12, 8, 0.65) 0%, rgba(10, 12, 8, 0.25) 60%, var(--bg) 100%), url('../images/hero-bg.jpg');
   background-size: cover;
   background-position: center;
 }
