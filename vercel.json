@@ -23,6 +23,10 @@
       "dest": "/storage/$1"
     },
     {
+      "src": "/favicon.png",
+      "dest": "/favicon.png"
+    },
+    {
       "src": "/favicon.ico",
       "dest": "/favicon.ico"
     },
