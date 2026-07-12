@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <title>Putri Daun & Ubay  Our Journey</title>
     <meta name="description" content="Sebuah catatan perjalanan cinta kami — Putri Daun dan Ubay. Dari benih kecil yang tumbuh menjadi pohon yang kuat.">
 
