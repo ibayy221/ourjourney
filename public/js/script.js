@@ -306,6 +306,63 @@
     });
   }
 
+  // ── Background Audio Controller ───────────────────────────────
+  function initBackgroundAudio() {
+    const musicCtrl = document.getElementById('music-ctrl');
+    const musicBtn = document.getElementById('music-btn');
+    const audio = document.getElementById('bg-audio');
+
+    if (!musicBtn || !audio) return;
+
+    // Toggle Play/Pause on click
+    musicBtn.addEventListener('click', (e) => {
+      e.stopPropagation(); // Avoid triggering document click
+      if (audio.paused) {
+        audio.volume = 0.4;
+        audio.play()
+          .then(() => {
+            musicCtrl.classList.add('is-playing');
+          })
+          .catch((err) => {
+            console.error('Audio playback failed:', err);
+          });
+      } else {
+        audio.pause();
+        musicCtrl.classList.remove('is-playing');
+      }
+    });
+
+    // Handle user interaction for autoplay policy (smooth fade-in)
+    const handleFirstInteraction = () => {
+      if (audio.paused && !musicCtrl.classList.contains('is-playing')) {
+        audio.volume = 0;
+        audio.play().then(() => {
+          musicCtrl.classList.add('is-playing');
+          // Smooth fade in volume to 0.4
+          let vol = 0;
+          const interval = setInterval(() => {
+            if (vol < 0.4) {
+              vol += 0.05;
+              audio.volume = vol;
+            } else {
+              clearInterval(interval);
+            }
+          }, 100);
+        }).catch(() => {
+          // Autoplay blocked by browser, wait for button click
+        });
+      }
+      
+      // Cleanup listeners
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('scroll', handleFirstInteraction);
+    };
+
+    window.addEventListener('click', handleFirstInteraction, { once: true });
+    window.addEventListener('scroll', handleFirstInteraction, { once: true });
+  }
+
   initBranchVideoPlay();
+  initBackgroundAudio();
 
 })();

@@ -398,8 +398,29 @@
     </p>
 </footer>
 
+{{-- Floating Music Controller --}}
+<div class="music-ctrl" id="music-ctrl" aria-label="Kontrol musik latar">
+    <button class="music-ctrl__btn" id="music-btn" title="Mute/Unmute Suasana Hutan">
+        <!-- Sound Wave Bars (Animates when playing) -->
+        <span class="music-ctrl__wave">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </span>
+        <!-- Icon: Forest Leaf / Sound (Shows when muted/paused) -->
+        <svg class="music-ctrl__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 2 2 4a7 7 0 0 1-7 7h-2"/>
+            <path d="M9 22v-4"/>
+        </svg>
+    </button>
+    <audio id="bg-audio" loop preload="auto">
+        <source src="{{ asset('audio/night-ambient.mp3') }}" type="audio/mpeg">
+    </audio>
+</div>
+
 {{-- Script --}}
-<script src="{{ asset('js/script.js') }}"></script>
+<script src="{{ asset('js/script.js') }}?v=1.0.9"></script>
 
 {{-- Milestone videos: autoplay on scroll ─────────── --}}
 <script>
