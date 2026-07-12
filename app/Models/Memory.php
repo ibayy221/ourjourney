@@ -9,8 +9,6 @@ class Memory extends Model
 {
     protected $fillable = [
         'section',
-        'type',
-        'file_path',
         'title',
         'caption',
         'category',
@@ -24,6 +22,18 @@ class Memory extends Model
         'order_index' => 'integer',
     ];
 
+    // Relasi ke tabel memory_media
+    public function media()
+    {
+        return $this->hasMany(MemoryMedia::class)->orderBy('order_index');
+    }
+
+    // Accessor helper: dapatkan media pertama sebagai fallback
+    public function getFirstMediaAttribute()
+    {
+        return $this->media->first();
+    }
+
     // Scope untuk filter per halaman/section
     public function scopeSection($query, string $section)
     {
@@ -36,58 +46,39 @@ class Memory extends Model
         return $query->orderBy('order_index')->orderBy('id');
     }
 
-    // Accessor untuk full URL file
+    // Accessor untuk full URL file (fallback)
     public function getFileUrlAttribute(): string
     {
-        if (filter_var($this->file_path, FILTER_VALIDATE_URL)) {
-            return $this->file_path;
-        }
-        return Storage::url($this->file_path);
+        return $this->first_media?->file_url ?? '';
     }
 
-    // Accessor: apakah ini link YouTube?
+    // Accessor: apakah ini link YouTube? (fallback)
     public function getIsYoutubeAttribute(): bool
     {
-        return $this->type === 'video' && (
-            str_contains($this->file_path, 'youtube.com') ||
-            str_contains($this->file_path, 'youtu.be')
-        );
+        return $this->first_media?->is_youtube ?? false;
     }
 
-    // Accessor: dapatkan YouTube Video ID
+    // Accessor: dapatkan YouTube Video ID (fallback)
     public function getYoutubeIdAttribute(): ?string
     {
-        if (!$this->is_youtube) {
-            return null;
-        }
-        
-        if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $this->file_path, $match)) {
-            return $match[1];
-        }
-        
-        return null;
+        return $this->first_media?->youtube_id;
     }
 
-    // Accessor: dapatkan Thumbnail URL
+    // Accessor: dapatkan Thumbnail URL (fallback)
     public function getThumbnailUrlAttribute(): string
     {
-        if ($this->is_youtube) {
-            $youtubeId = $this->youtube_id;
-            return "https://img.youtube.com/vi/{$youtubeId}/hqdefault.jpg";
-        }
-        
-        return $this->file_url;
+        return $this->first_media?->thumbnail_url ?? '';
     }
 
-    // Accessor: apakah ini video?
+    // Accessor: apakah ini video? (fallback)
     public function getIsVideoAttribute(): bool
     {
-        return $this->type === 'video';
+        return $this->first_media?->is_video ?? false;
     }
 
-    // Accessor: apakah ini foto?
+    // Accessor: apakah ini foto? (fallback)
     public function getIsPhotoAttribute(): bool
     {
-        return $this->type === 'photo';
+        return $this->first_media?->is_photo ?? false;
     }
 }

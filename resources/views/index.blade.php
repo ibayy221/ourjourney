@@ -13,6 +13,9 @@
     {{-- GSAP 3 + ScrollTrigger via CDN --}}
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    
+    {{-- Alpine.js for interactive carousels --}}
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body>
 
@@ -159,16 +162,42 @@
                         </div>
 
                         <div class="milestone-card__media">
-                            @if($milestone->type === 'video')
-                                <video src="{{ $milestone->file_url }}"
-                                       muted loop playsinline
-                                       style="width:100%;height:100%;object-fit:cover;"
-                                       aria-label="{{ $milestone->title ?? 'Video momen' }}">
-                                </video>
-                            @else
-                                <img src="{{ $milestone->file_url }}"
-                                     alt="{{ $milestone->title ?? 'Foto momen' }}"
-                                     loading="lazy">
+                            @if($milestone->media->count() > 1)
+                                <div class="media-carousel" x-data="{ activeIndex: 0, total: {{ $milestone->media->count() }} }">
+                                    <div class="media-carousel__track" :style="'transform: translateX(-' + (activeIndex * 100) + '%)'">
+                                        @foreach($milestone->media as $mediaItem)
+                                            <div class="media-carousel__slide">
+                                                @if($mediaItem->type === 'video')
+                                                    @if($mediaItem->is_youtube)
+                                                        <iframe src="https://www.youtube.com/embed/{{ $mediaItem->youtube_id }}" frameborder="0" allowfullscreen class="w-full h-full object-cover"></iframe>
+                                                    @else
+                                                        <video src="{{ $mediaItem->file_url }}" muted loop playsinline controls class="w-full h-full object-cover"></video>
+                                                    @endif
+                                                @else
+                                                    <img src="{{ $mediaItem->file_url }}" alt="{{ $milestone->title ?? 'Foto momen' }}" class="w-full h-full object-cover" loading="lazy">
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <button class="media-carousel__btn is-prev" @click="activeIndex = (activeIndex === 0) ? total - 1 : activeIndex - 1" x-show="total > 1">‹</button>
+                                    <button class="media-carousel__btn is-next" @click="activeIndex = (activeIndex === total - 1) ? 0 : activeIndex + 1" x-show="total > 1">›</button>
+                                    <div class="media-carousel__indicators" x-show="total > 1">
+                                        <template x-for="(item, idx) in total" :key="idx">
+                                            <span class="media-carousel__dot" :class="activeIndex === idx ? 'is-active' : ''" @click="activeIndex = idx"></span>
+                                        </template>
+                                    </div>
+                                </div>
+                            @elseif($milestone->media->count() === 1)
+                                @php $mediaItem = $milestone->media->first(); @endphp
+                                @if($mediaItem->type === 'video')
+                                    @if($mediaItem->is_youtube)
+                                        <iframe src="https://www.youtube.com/embed/{{ $mediaItem->youtube_id }}" frameborder="0" allowfullscreen style="width:100%;height:100%;object-fit:cover;"></iframe>
+                                    @else
+                                        <video src="{{ $mediaItem->file_url }}" muted loop playsinline controls style="width:100%;height:100%;object-fit:cover;" aria-label="{{ $milestone->title ?? 'Video momen' }}"></video>
+                                    @endif
+                                @else
+                                    <img src="{{ $mediaItem->file_url }}" alt="{{ $milestone->title ?? 'Foto momen' }}" loading="lazy">
+                                @endif
                             @endif
                         </div>
 
@@ -201,16 +230,43 @@
                 <div class="branch-grid">
                     @foreach($items as $item)
                         <div class="branch-item" tabindex="0"
-                             aria-label="{{ $item->caption ?? 'Memory' }}">
-                            @if($item->type === 'video')
-                                <video src="{{ $item->file_url }}"
-                                       muted loop playsinline
-                                       style="width:100%;height:100%;object-fit:cover;">
-                                </video>
-                            @else
-                                <img src="{{ $item->file_url }}"
-                                     alt="{{ $item->caption ?? 'Kenangan' }}"
-                                     loading="lazy">
+                             aria-label="{{ $item->caption ?? 'Memory' }}" style="overflow: hidden; position: relative;">
+                            @if($item->media->count() > 1)
+                                <div class="media-carousel" x-data="{ activeIndex: 0, total: {{ $item->media->count() }} }" style="width:100%;height:100%;">
+                                    <div class="media-carousel__track" :style="'transform: translateX(-' + (activeIndex * 100) + '%)'" style="width:100%;height:100%;">
+                                        @foreach($item->media as $mediaItem)
+                                            <div class="media-carousel__slide" style="width:100%;height:100%;">
+                                                @if($mediaItem->type === 'video')
+                                                    @if($mediaItem->is_youtube)
+                                                        <iframe src="https://www.youtube.com/embed/{{ $mediaItem->youtube_id }}" frameborder="0" allowfullscreen class="w-full h-full object-cover"></iframe>
+                                                    @else
+                                                        <video src="{{ $mediaItem->file_url }}" muted loop playsinline class="w-full h-full object-cover"></video>
+                                                    @endif
+                                                @else
+                                                    <img src="{{ $mediaItem->file_url }}" alt="{{ $item->caption ?? 'Kenangan' }}" class="w-full h-full object-cover" loading="lazy">
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <button class="media-carousel__btn is-prev" @click.stop="activeIndex = (activeIndex === 0) ? total - 1 : activeIndex - 1" x-show="total > 1" style="font-size: 1.2rem;">‹</button>
+                                    <button class="media-carousel__btn is-next" @click.stop="activeIndex = (activeIndex === total - 1) ? 0 : activeIndex + 1" x-show="total > 1" style="font-size: 1.2rem;">›</button>
+                                    <div class="media-carousel__indicators" x-show="total > 1">
+                                        <template x-for="(mItem, idx) in total" :key="idx">
+                                            <span class="media-carousel__dot" :class="activeIndex === idx ? 'is-active' : ''" @click.stop="activeIndex = idx"></span>
+                                        </template>
+                                    </div>
+                                </div>
+                            @elseif($item->media->count() === 1)
+                                @php $mediaItem = $item->media->first(); @endphp
+                                @if($mediaItem->type === 'video')
+                                    @if($mediaItem->is_youtube)
+                                        <iframe src="https://www.youtube.com/embed/{{ $mediaItem->youtube_id }}" frameborder="0" allowfullscreen style="width:100%;height:100%;object-fit:cover;"></iframe>
+                                    @else
+                                        <video src="{{ $mediaItem->file_url }}" muted loop playsinline style="width:100%;height:100%;object-fit:cover;"></video>
+                                    @endif
+                                @else
+                                    <img src="{{ $mediaItem->file_url }}" alt="{{ $item->caption ?? 'Kenangan' }}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">
+                                @endif
                             @endif
                             @if($item->caption)
                                 <div class="branch-item__overlay">

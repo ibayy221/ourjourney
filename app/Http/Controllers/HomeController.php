@@ -11,12 +11,12 @@ class HomeController extends Controller
     public function index(): View
     {
         // Ambil semua milestone diurutkan berdasarkan order_index
-        $milestones = Memory::section('milestone')
+        $milestones = Memory::with('media')->section('milestone')
             ->ordered()
             ->get();
 
         // Ambil semua branch, kelompokkan per chapter
-        $branches = Memory::section('branch')
+        $branches = Memory::with('media')->section('branch')
             ->ordered()
             ->get()
             ->groupBy('chapter');

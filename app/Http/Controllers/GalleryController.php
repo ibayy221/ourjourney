@@ -10,8 +10,9 @@ class GalleryController extends Controller
     public function index(): View
     {
         // Ambil semua gallery items yang bertipe photo (foto saja)
-        $items = Memory::section('gallery')
-            ->where('type', 'photo')
+        $items = Memory::with('media')
+            ->section('gallery')
+            ->whereHas('media', fn($q) => $q->where('type', 'photo'))
             ->ordered()
             ->get()
             ->map(fn($m) => [
@@ -33,8 +34,9 @@ class GalleryController extends Controller
     public function cinema(): View
     {
         // Ambil semua gallery items yang bertipe video (video lokal / youtube)
-        $items = Memory::section('gallery')
-            ->where('type', 'video')
+        $items = Memory::with('media')
+            ->section('gallery')
+            ->whereHas('media', fn($q) => $q->where('type', 'video'))
             ->ordered()
             ->get()
             ->map(fn($m) => [
