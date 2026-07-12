@@ -370,7 +370,7 @@
                 <input type="file" name="file" class="hidden"
                        accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime,video/mpeg,video/webm"
                        @change="handleSingleFileSelect($event)"
-                       :required="sourceType === 'file' && !'{{ $isEdit }}' && !previewUrl">
+                       :required="sourceType === 'file' && section === 'gallery' && !isEdit && !previewUrl">
             </label>
         </div>
 
