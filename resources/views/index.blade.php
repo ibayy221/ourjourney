@@ -9,7 +9,7 @@
 
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
     {{-- Public CSS (design tokens + animations) --}}
-    <link rel="stylesheet" href="{{ asset('css/public.css') }}?v=1.0.5">
+    <link rel="stylesheet" href="{{ asset('css/public.css') }}?v=1.0.7">
 
     {{-- GSAP 3 + ScrollTrigger via CDN --}}
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
@@ -23,7 +23,7 @@
 {{-- ══════════════════════════════════════════════════════════════
      NAVIGATION
 ══════════════════════════════════════════════════════════════ --}}
-<nav class="pub-nav" role="navigation" aria-label="Navigasi utama">
+<nav class="pub-nav home-page-nav" role="navigation" aria-label="Navigasi utama">
     <span class="pub-nav__brand">Putri Daun <span>&amp;</span> Ubay</span>
     <ul class="pub-nav__links">
         <li><a href="#milestones" class="active">Perjalanan</a></li>
