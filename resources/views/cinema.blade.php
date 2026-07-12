@@ -155,10 +155,10 @@
         </svg>
     </button>
 
-    <div class="lightbox__media-wrap" style="position: relative;">
+    <div class="lightbox__media-wrap">
         <div id="lb-glow" class="lightbox__glow"></div>
-        <div id="lb-media" style="position: relative; z-index: 2;"></div>
-        <div class="lightbox__info" style="position: relative; z-index: 2;">
+        <div id="lb-media"></div>
+        <div class="lightbox__info">
             <p id="lb-caption" class="lightbox__caption"></p>
         </div>
     </div>
