@@ -95,16 +95,50 @@
                   stroke-linecap="round"
                   stroke-linejoin="round"/>
 
-            {{-- Small branch left near bottom --}}
-            <path d="M100,620 Q75,595 55,580" fill="none" stroke="#8FA283" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>
-            {{-- Small branch right --}}
-            <path d="M100,510 Q128,488 148,478" fill="none" stroke="#8FA283" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>
-            {{-- Mid branch left --}}
-            <path d="M100,380 Q68,355 44,348" fill="none" stroke="#8FA283" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
-            {{-- Mid branch right --}}
-            <path d="M100,260 Q136,238 158,228" fill="none" stroke="#8FA283" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
-            {{-- Upper branch left --}}
-            <path d="M100,155 Q72,130 52,118" fill="none" stroke="#C97B84" stroke-width="1.8" stroke-linecap="round" opacity="0.5"/>
+            {{-- Branch Group 1 (Bottom Left) --}}
+            <g class="sprout-group" data-trigger-progress="0.22" style="transform: scale(0); transform-origin: 100px 620px; overflow: visible;">
+                <path d="M100,620 Q75,595 55,580" fill="none" stroke="#8FA283" stroke-width="2.5" stroke-linecap="round"/>
+                {{-- Leaf at the tip --}}
+                <path d="M55,580 C48,575 40,578 36,585 C34,592 42,596 52,586 Z" fill="#8FA283"/>
+                {{-- Little pink blossom bud --}}
+                <circle cx="55" cy="580" r="3.5" fill="#C97B84"/>
+            </g>
+
+            {{-- Branch Group 2 (Bottom Right) --}}
+            <g class="sprout-group" data-trigger-progress="0.37" style="transform: scale(0); transform-origin: 100px 510px; overflow: visible;">
+                <path d="M100,510 Q128,488 148,478" fill="none" stroke="#8FA283" stroke-width="2.5" stroke-linecap="round"/>
+                {{-- Leaf at tip --}}
+                <path d="M148,478 C155,473 163,476 167,483 C169,490 161,494 151,484 Z" fill="#8FA283"/>
+                {{-- Little bloom bud --}}
+                <circle cx="148" cy="478" r="3.5" fill="#C97B84"/>
+            </g>
+
+            {{-- Branch Group 3 (Mid Left) --}}
+            <g class="sprout-group" data-trigger-progress="0.54" style="transform: scale(0); transform-origin: 100px 380px; overflow: visible;">
+                <path d="M100,380 Q68,355 44,348" fill="none" stroke="#8FA283" stroke-width="2" stroke-linecap="round"/>
+                {{-- Leaf at tip --}}
+                <path d="M44,348 C37,344 30,349 28,356 C26,363 35,363 43,354 Z" fill="#8FA283"/>
+                {{-- Double leaf --}}
+                <path d="M44,348 C42,338 34,336 31,342 C28,348 37,350 42,349 Z" fill="#8FA283"/>
+                <circle cx="44" cy="348" r="3" fill="#C97B84"/>
+            </g>
+
+            {{-- Branch Group 4 (Mid Right) --}}
+            <g class="sprout-group" data-trigger-progress="0.70" style="transform: scale(0); transform-origin: 100px 260px; overflow: visible;">
+                <path d="M100,260 Q136,238 158,228" fill="none" stroke="#8FA283" stroke-width="2" stroke-linecap="round"/>
+                {{-- Leaf at tip --}}
+                <path d="M158,228 C165,224 172,229 174,236 C176,243 167,243 159,234 Z" fill="#8FA283"/>
+                <circle cx="158" cy="228" r="3" fill="#C97B84"/>
+            </g>
+
+            {{-- Branch Group 5 (Upper Left) --}}
+            <g class="sprout-group" data-trigger-progress="0.83" style="transform: scale(0); transform-origin: 100px 155px; overflow: visible;">
+                <path d="M100,155 Q72,130 52,118" fill="none" stroke="#8FA283" stroke-width="1.8" stroke-linecap="round"/>
+                {{-- Pink flower bloom --}}
+                <path d="M52,118 C47,113 40,111 37,117 C34,123 43,124 49,120 Z" fill="#C97B84"/>
+                <path d="M52,118 C50,108 42,106 39,112 C36,118 45,120 50,119 Z" fill="#C97B84"/>
+                <circle cx="52" cy="118" r="2.5" fill="#EFA1A4"/>
+            </g>
             {{-- Leaf blobs along trunk --}}
             <ellipse cx="50" cy="576" rx="12" ry="8" fill="#8FA283" opacity="0.25" transform="rotate(-20,50,576)"/>
             <ellipse cx="152" cy="475" rx="10" ry="7" fill="#8FA283" opacity="0.25" transform="rotate(15,152,475)"/>

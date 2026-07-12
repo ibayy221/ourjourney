@@ -60,6 +60,7 @@
 
   if (trunkPath && !prefersReduced) {
     const totalLength = trunkPath.getTotalLength();
+    const sproutGroups = document.querySelectorAll('.sprout-group');
 
     // Set initial state: fully hidden stroke
     gsap.set(trunkPath, {
@@ -106,6 +107,20 @@
           top: yPct + '%',
           opacity: progress > 0.02 ? 1 : 0,
           scale: 0.5 + progress * 0.8,
+        });
+
+        // Sprout branches and leaves as trunk progress passes their threshold
+        sproutGroups.forEach((group) => {
+          const triggerVal = parseFloat(group.dataset.triggerProgress || '0');
+          const isGrown = progress >= triggerVal;
+
+          gsap.to(group, {
+            scale: isGrown ? 1 : 0,
+            opacity: isGrown ? 1 : 0,
+            duration: 0.4,
+            ease: isGrown ? 'back.out(2)' : 'power2.inOut',
+            overwrite: 'auto'
+          });
         });
       },
     });
