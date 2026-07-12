@@ -8,7 +8,7 @@
     <meta name="description" content="Sebuah catatan perjalanan cinta kami — Putri Daun dan Ubay. Dari benih kecil yang tumbuh menjadi pohon yang kuat.">
 
     {{-- Public CSS (design tokens + animations) --}}
-    <link rel="stylesheet" href="{{ asset('css/public.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/public.css') }}?v=1.0.5">
 
     {{-- GSAP 3 + ScrollTrigger via CDN --}}
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>

@@ -8,7 +8,7 @@
     <meta name="description" content="Semua video kenangan perjalanan cinta Putri Daun dan Ubay.">
 
     {{-- Public CSS --}}
-    <link rel="stylesheet" href="{{ asset('css/public.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/public.css') }}?v=1.0.5">
 
     {{-- GSAP 3 + ScrollTrigger --}}
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
