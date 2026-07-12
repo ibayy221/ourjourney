@@ -23,6 +23,10 @@
       "dest": "/images/$1"
     },
     {
+      "src": "/audio/(.*)",
+      "dest": "/audio/$1"
+    },
+    {
       "src": "/storage/(.*)",
       "dest": "/storage/$1"
     },
