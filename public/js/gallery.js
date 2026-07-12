@@ -34,6 +34,8 @@
       type: el.dataset.type,
       src: el.dataset.src,
       caption: el.dataset.caption || '',
+      isYoutube: el.dataset.isYoutube === 'true',
+      youtubeId: el.dataset.youtubeId || '',
     }));
   }
 
@@ -130,13 +132,21 @@
     lbCaption.textContent = item.caption;
 
     if (item.type === 'video') {
-      const video = document.createElement('video');
-      video.src = item.src;
-      video.controls = true;
-      video.autoplay = true;
-      video.playsInline = true;
-      video.muted = false;
-      lbMedia.appendChild(video);
+      if (item.isYoutube && item.youtubeId) {
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.youtube.com/embed/${item.youtubeId}?autoplay=1&rel=0`;
+        iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+        iframe.allowFullscreen = true;
+        lbMedia.appendChild(iframe);
+      } else {
+        const video = document.createElement('video');
+        video.src = item.src;
+        video.controls = true;
+        video.autoplay = true;
+        video.playsInline = true;
+        video.muted = false;
+        lbMedia.appendChild(video);
+      }
     } else {
       const img = document.createElement('img');
       img.src = item.src;

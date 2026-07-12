@@ -51,6 +51,16 @@
                 <a href="{{ route('admin.memories.index') }}" class="text-white font-semibold text-lg tracking-wide">
                     Our Journey <span class="text-green-300 font-normal text-sm">Admin</span>
                 </a>
+                <div class="hidden sm:flex items-center gap-4 ml-6 border-l border-green-700 pl-6">
+                    <a href="{{ route('admin.memories.index') }}"
+                       class="text-sm transition-colors {{ request()->routeIs('admin.memories.*') ? 'text-white font-semibold' : 'text-green-200 hover:text-white' }}">
+                        Memories 🌱
+                    </a>
+                    <a href="{{ route('admin.wishlists.index') }}"
+                       class="text-sm transition-colors {{ request()->routeIs('admin.wishlists.*') ? 'text-white font-semibold' : 'text-green-200 hover:text-white' }}">
+                        Bucket List 📝
+                    </a>
+                </div>
             </div>
             <div class="flex items-center gap-4">
                 <a href="{{ route('home') }}" target="_blank"

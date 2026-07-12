@@ -15,47 +15,228 @@
     showTitle()   { return this.section === 'milestone'; },
     showChapter() { return this.section === 'milestone' || this.section === 'branch'; },
     showDate()    { return this.section === 'milestone'; },
-    previewUrl: '{{ $isEdit ? $memory->file_url : '' }}',
-    previewType: '{{ $isEdit ? $memory->type : '' }}',
-    handleFile(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        this.previewType = file.type.startsWith('video/') ? 'video' : 'photo';
-        this.previewUrl = URL.createObjectURL(file);
+    
+    // Media Source: 'file' or 'youtube'
+    sourceType: '{{ $isEdit && $memory->is_youtube ? 'youtube' : 'file' }}',
+    
+    // For single file (edit mode)
+    previewUrl: '{{ $isEdit && !$memory->is_youtube ? $memory->file_url : '' }}',
+    previewType: '{{ $isEdit && !$memory->is_youtube ? $memory->type : '' }}',
+    
+    // For multiple files (create mode)
+    filesList: [],
+    isDragOver: false,
+    
+    // For YouTube input
+    youtubeUrl: '{{ $isEdit && $memory->is_youtube ? $memory->file_path : '' }}',
+    youtubeId: '{{ $isEdit && $memory->is_youtube ? $memory->youtube_id : '' }}',
+    
+    init() {
+        this.$watch('youtubeUrl', value => {
+            this.youtubeId = this.parseYoutubeId(value);
+        });
+    },
+    
+    parseYoutubeId(url) {
+        if (!url) return '';
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const match = url.match(regExp);
+        return (match && match[2].length === 11) ? match[2] : '';
+    },
+    
+    handleFileSelect(e) {
+        if (!e.target.files.length) return;
+        this.addFiles(Array.from(e.target.files));
+    },
+    
+    handleDrop(e) {
+        if (!e.dataTransfer.files.length) return;
+        this.addFiles(Array.from(e.dataTransfer.files));
+    },
+    
+    addFiles(files) {
+        if ('{{ $isEdit }}') {
+            const file = files[0];
+            if (!file) return;
+            this.previewType = file.type.startsWith('video/') ? 'video' : 'photo';
+            this.previewUrl = URL.createObjectURL(file);
+            
+            // Sync single file input
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            this.$refs.fileInput.files = dataTransfer.files;
+        } else {
+            files.forEach(file => {
+                const type = file.type.startsWith('video/') ? 'video' : 'photo';
+                const previewUrl = URL.createObjectURL(file);
+                this.filesList.push({
+                    file: file,
+                    previewUrl: previewUrl,
+                    type: type,
+                    name: file.name
+                });
+            });
+            this.syncFilesInput();
+        }
+    },
+    
+    removeFile(index) {
+        URL.revokeObjectURL(this.filesList[index].previewUrl);
+        this.filesList.splice(index, 1);
+        this.syncFilesInput();
+    },
+    
+    syncFilesInput() {
+        const dataTransfer = new DataTransfer();
+        this.filesList.forEach(item => {
+            dataTransfer.items.add(item.file);
+        });
+        this.$refs.fileInput.files = dataTransfer.files;
     }
 }" class="space-y-6">
 
-    {{-- File Upload --}}
-    <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">
-            {{ $isEdit ? 'Ganti File (opsional)' : 'Upload File' }}
-            @if(!$isEdit) <span class="text-red-500">*</span> @endif
-        </label>
-
-        {{-- Preview --}}
-        <div x-show="previewUrl" class="mb-3 rounded-xl overflow-hidden bg-gray-100 max-w-xs" x-cloak>
-            <template x-if="previewType === 'video'">
-                <video :src="previewUrl" controls class="w-full max-h-48 object-contain"></video>
-            </template>
-            <template x-if="previewType !== 'video'">
-                <img :src="previewUrl" alt="Preview" class="w-full max-h-48 object-contain">
-            </template>
+    {{-- Media Input (File Upload vs YouTube URL) --}}
+    <div class="bg-gray-50/50 rounded-2xl border border-gray-100 p-4">
+        {{-- Toggle Tabs --}}
+        <div class="flex gap-1 rounded-xl bg-gray-100 p-1 w-fit mb-4">
+            <button type="button" @click="sourceType = 'file'"
+                    :class="sourceType === 'file' ? 'bg-white shadow text-green-deep font-semibold' : 'text-gray-500 hover:text-gray-700'"
+                    class="rounded-lg px-4 py-1.5 text-xs transition-all">
+                📁 Upload File
+            </button>
+            <button type="button" @click="sourceType = 'youtube'"
+                    :class="sourceType === 'youtube' ? 'bg-white shadow text-green-deep font-semibold' : 'text-gray-500 hover:text-gray-700'"
+                    class="rounded-lg px-4 py-1.5 text-xs transition-all">
+                🔗 Link YouTube
+            </button>
         </div>
 
-        <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-green-deep hover:bg-green-50 transition-colors">
-            <svg class="w-8 h-8 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-            </svg>
-            <span class="text-sm text-gray-500">Klik untuk pilih foto atau video</span>
-            <span class="text-xs text-gray-400 mt-1">Max 20MB · JPG, PNG, GIF, WebP, MP4, MOV, WebM</span>
-            <input type="file" name="file" class="hidden"
-                   accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime,video/mpeg,video/webm"
-                   @change="handleFile($event)"
-                   {{ !$isEdit ? 'required' : '' }}>
-        </label>
+        {{-- 📁 File Upload Section --}}
+        <div x-show="sourceType === 'file'" x-cloak>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+                {{ $isEdit ? 'Ganti File (opsional)' : 'Upload File' }}
+                @if(!$isEdit) <span class="text-red-500">*</span> @endif
+            </label>
+
+            {{-- Preview for Edit Mode (Single File) --}}
+            @if($isEdit)
+            <div x-show="previewUrl" class="mb-3 rounded-xl overflow-hidden bg-gray-100 max-w-xs" x-cloak>
+                <template x-if="previewType === 'video'">
+                    <video :src="previewUrl" controls class="w-full max-h-48 object-contain"></video>
+                </template>
+                <template x-if="previewType !== 'video'">
+                    <img :src="previewUrl" alt="Preview" class="w-full max-h-48 object-contain">
+                </template>
+            </div>
+            @endif
+
+            {{-- Preview Grid for Create Mode (Multiple Files) --}}
+            @if(!$isEdit)
+            <div x-show="filesList.length > 0" class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4" x-cloak>
+                <template x-for="(item, index) in filesList" :key="index">
+                    <div class="relative group rounded-xl overflow-hidden border border-gray-200 bg-white shadow-sm flex flex-col h-36">
+                        {{-- Media Preview --}}
+                        <div class="w-full flex-1 bg-gray-50 overflow-hidden relative flex items-center justify-center">
+                            <template x-if="item.type === 'video'">
+                                <div class="w-full h-full flex items-center justify-center bg-gray-100 text-gray-500">
+                                    <svg class="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M8 5v14l11-7z"/>
+                                    </svg>
+                                </div>
+                            </template>
+                            <template x-if="item.type !== 'video'">
+                                <img :src="item.previewUrl" class="w-full h-full object-cover" />
+                            </template>
+                            
+                            {{-- Video badge --}}
+                            <template x-if="item.type === 'video'">
+                                <span class="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded font-mono">
+                                    🎥 VIDEO
+                                </span>
+                            </template>
+                        </div>
+                        
+                        {{-- Info --}}
+                        <div class="p-2 border-t border-gray-100 bg-gray-50 flex items-center justify-between text-xs text-gray-500">
+                            <span class="truncate pr-2 font-mono" x-text="item.name"></span>
+                            <button type="button" @click="removeFile(index)"
+                                    class="text-red-500 hover:text-red-700 bg-white hover:bg-red-50 p-1 rounded-md shadow-sm border border-gray-200 transition-colors">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </template>
+            </div>
+            @endif
+
+            {{-- Drag & Drop Area --}}
+            <label
+                @dragover.prevent="isDragOver = true"
+                @dragleave.prevent="isDragOver = false"
+                @drop.prevent="isDragOver = false; handleDrop($event)"
+                :class="isDragOver ? 'border-green-deep bg-green-50/50' : 'border-gray-300 hover:border-green-deep hover:bg-green-50'"
+                class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-xl cursor-pointer transition-all duration-200">
+                <svg class="w-10 h-10 text-gray-400 mb-2 transition-transform duration-200" :class="isDragOver ? 'scale-110 text-green-deep' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                </svg>
+                <span class="text-sm font-medium text-gray-600" x-text="isDragOver ? 'Lepaskan file di sini!' : 'Klik atau drag file ke sini'"></span>
+                <span class="text-xs text-gray-400 mt-1" x-show="!isDragOver">Max 20MB per file · JPG, PNG, GIF, WebP, MP4, MOV, WebM</span>
+                
+                @if($isEdit)
+                    <input type="file" name="file" x-ref="fileInput" class="hidden"
+                           accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime,video/mpeg,video/webm"
+                           @change="handleFileSelect($event)"
+                           :required="sourceType === 'file' && !'{{ $isEdit }}' && !previewUrl">
+                @else
+                    <input type="file" name="files[]" x-ref="fileInput" class="hidden"
+                           accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime,video/mpeg,video/webm"
+                           multiple
+                           @change="handleFileSelect($event)"
+                           :required="sourceType === 'file' && filesList.length === 0">
+                @endif
+            </label>
+        </div>
+
+        {{-- 🔗 Link YouTube Section --}}
+        <div x-show="sourceType === 'youtube'" x-cloak class="space-y-4">
+            <div>
+                <label for="youtube_url" class="block text-sm font-medium text-gray-700 mb-2">
+                    URL Video YouTube <span class="text-red-500">*</span>
+                </label>
+                <input type="url" id="youtube_url" name="youtube_url" 
+                       x-model="youtubeUrl"
+                       placeholder="Contoh: https://www.youtube.com/watch?v=xxxxxxxxxxx atau https://youtu.be/xxxxxxxxxxx"
+                       class="w-full rounded-lg border-gray-300 shadow-sm focus:border-green-deep focus:ring-green-deep text-sm"
+                       :required="sourceType === 'youtube' && !'{{ $isEdit }}'">
+                <p class="mt-1 text-xs text-gray-400">
+                    Mendukung format link YouTube biasa atau tautan pendek (youtu.be).
+                </p>
+                
+                {{-- YouTube Video Live Preview --}}
+                <div x-show="youtubeId" class="mt-4 rounded-xl overflow-hidden bg-black aspect-video max-w-sm relative border border-gray-200 shadow-sm" x-cloak>
+                    <iframe :src="'https://www.youtube.com/embed/' + youtubeId" 
+                            class="absolute inset-0 w-full h-full" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+        </div>
 
         @error('file')
+            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+        @enderror
+        @error('files')
+            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+        @enderror
+        @error('files.*')
+            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+        @enderror
+        @error('youtube_url')
             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
         @enderror
     </div>

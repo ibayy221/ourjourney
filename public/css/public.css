@@ -722,12 +722,24 @@ a { color: inherit; text-decoration: none; }
 }
 
 .lightbox__media-wrap img,
-.lightbox__media-wrap video {
+.lightbox__media-wrap video,
+.lightbox__media-wrap iframe {
   max-width: 90vw;
   max-height: 84svh;
   border-radius: var(--radius-sm);
   box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+}
+
+.lightbox__media-wrap img,
+.lightbox__media-wrap video {
   object-fit: contain;
+}
+
+.lightbox__media-wrap iframe {
+  width: 85vw;
+  max-width: 960px;
+  aspect-ratio: 16/9;
+  border: 0;
 }
 
 .lightbox__info {
@@ -877,3 +889,188 @@ a { color: inherit; text-decoration: none; }
   .masonry-grid { columns: 2; column-gap: 8px; }
   .masonry-item { margin-bottom: 8px; }
 }
+
+/* ── Wishlist Section ───────────────────────────────────────── */
+.wishlist-section {
+  padding: 100px 0;
+  background: var(--bg);
+  position: relative;
+}
+
+.wishlist-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.wishlist-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--green-soft);
+  margin-bottom: 12px;
+}
+
+.wishlist-title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 300;
+  color: var(--green-deep);
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+}
+
+.wishlist-title em {
+  font-style: italic;
+  color: var(--bloom);
+}
+
+.wishlist-subtitle {
+  font-size: clamp(0.9rem, 1.8vw, 1.1rem);
+  color: var(--ink-muted);
+  font-weight: 300;
+  max-width: 500px;
+  margin-inline: auto;
+}
+
+.wishlist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.wishlist-item {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  border: 1px solid rgba(143, 162, 131, 0.12);
+  display: flex;
+  gap: 16px;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.wishlist-item:hover {
+  transform: translateY(-4px);
+  border-color: rgba(143, 162, 131, 0.3);
+  box-shadow: var(--shadow-card);
+}
+
+.wishlist-item__status {
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.wishlist-item__icon-completed {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--bloom-pale);
+  color: var(--bloom);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wishlist-item__icon-active {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--green-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wishlist-item__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green-soft);
+  animation: sproutPulse 2s infinite ease-in-out;
+}
+
+@keyframes sproutPulse {
+  0%, 100% { transform: scale(0.8); opacity: 0.6; }
+  50% { transform: scale(1.2); opacity: 1; }
+}
+
+.wishlist-item__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.wishlist-item__title {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--green-deep);
+  transition: color 0.3s;
+}
+
+.wishlist-item.is-completed .wishlist-item__title {
+  color: var(--ink-muted);
+  text-decoration: line-through;
+}
+
+.wishlist-item__description {
+  font-size: 0.875rem;
+  color: var(--ink-muted);
+  line-height: 1.6;
+}
+
+.wishlist-item.is-completed .wishlist-item__description {
+  opacity: 0.7;
+}
+
+.wishlist-item__completed-at {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+  color: var(--gold);
+  margin-top: 4px;
+}
+
+/* ── Cinema Grid (Videos only) ──────────────────────────────── */
+.cinema-grid {
+  columns: auto;
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 16px;
+  padding: 0 24px 80px;
+  max-width: 1200px;
+  margin-inline: auto;
+}
+
+@media (min-width: 640px) {
+  .cinema-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .cinema-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+  }
+}
+
+.cinema-grid .masonry-item {
+  break-inside: auto;
+  margin-bottom: 0;
+  aspect-ratio: 16/9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.cinema-grid .masonry-item img,
+.cinema-grid .masonry-item video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+

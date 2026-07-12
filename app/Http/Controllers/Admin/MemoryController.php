@@ -37,39 +37,79 @@ class MemoryController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'file'       => ['required', 'file', 'mimetypes:image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime,video/mpeg,video/webm', 'max:20480'],
-            'section'    => ['required', 'in:milestone,branch,gallery'],
-            'title'      => ['nullable', 'string', 'max:255'],
-            'caption'    => ['nullable', 'string'],
-            'category'   => ['nullable', 'string', 'max:255'],
-            'chapter'    => ['nullable', 'string', 'max:255'],
-            'event_date' => ['nullable', 'date'],
+            'file'        => ['nullable', 'file', 'mimetypes:image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime,video/mpeg,video/webm', 'max:20480'],
+            'files'       => ['nullable', 'array'],
+            'files.*'     => ['file', 'mimetypes:image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime,video/mpeg,video/webm', 'max:20480'],
+            'youtube_url' => ['nullable', 'url'],
+            'section'     => ['required', 'in:milestone,branch,gallery'],
+            'title'       => ['nullable', 'string', 'max:255'],
+            'caption'     => ['nullable', 'string'],
+            'category'    => ['nullable', 'string', 'max:255'],
+            'chapter'     => ['nullable', 'string', 'max:255'],
+            'event_date'  => ['nullable', 'date'],
         ]);
 
-        // Tentukan type berdasarkan mime type file
-        $mime = $request->file('file')->getMimeType();
-        $type = str_starts_with($mime, 'video/') ? 'video' : 'photo';
+        if (!$request->hasFile('file') && !$request->hasFile('files') && empty($validated['youtube_url'])) {
+            return back()->withErrors(['file' => 'Pilih setidaknya satu file untuk diupload atau isi link YouTube.'])->withInput();
+        }
 
-        // Simpan file ke storage/app/public/memories/
-        $path = $request->file('file')->store('memories', 'public');
+        $section = $validated['section'];
+        $maxOrder = Memory::section($section)->max('order_index') ?? -1;
 
-        // Hitung order_index berikutnya untuk section ini
-        $maxOrder = Memory::section($validated['section'])->max('order_index') ?? -1;
+        if (!empty($validated['youtube_url'])) {
+            // Regex to check if it's a valid YouTube link
+            if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $validated['youtube_url'], $match)) {
+                $maxOrder++;
+                Memory::create([
+                    'section'     => $section,
+                    'type'        => 'video',
+                    'file_path'   => $validated['youtube_url'],
+                    'title'       => $validated['title'] ?? null,
+                    'caption'     => $validated['caption'] ?? null,
+                    'category'    => $validated['category'] ?? null,
+                    'chapter'     => $validated['chapter'] ?? null,
+                    'event_date'  => $validated['event_date'] ?? null,
+                    'order_index' => $maxOrder,
+                ]);
+                
+                return redirect()->route('admin.memories.index')
+                    ->with('success', 'Video YouTube berhasil ditambahkan!');
+            } else {
+                return back()->withErrors(['youtube_url' => 'Format URL YouTube tidak valid.'])->withInput();
+            }
+        }
 
-        Memory::create([
-            'section'     => $validated['section'],
-            'type'        => $type,
-            'file_path'   => $path,
-            'title'       => $validated['title'] ?? null,
-            'caption'     => $validated['caption'] ?? null,
-            'category'    => $validated['category'] ?? null,
-            'chapter'     => $validated['chapter'] ?? null,
-            'event_date'  => $validated['event_date'] ?? null,
-            'order_index' => $maxOrder + 1,
-        ]);
+        // Process files
+        $filesToUpload = [];
+        if ($request->hasFile('file')) {
+            $filesToUpload[] = $request->file('file');
+        } elseif ($request->hasFile('files')) {
+            $filesToUpload = $request->file('files');
+        }
 
+        foreach ($filesToUpload as $file) {
+            $mime = $file->getMimeType();
+            $type = str_starts_with($mime, 'video/') ? 'video' : 'photo';
+            $path = $file->store('memories', 'public');
+
+            $maxOrder++;
+
+            Memory::create([
+                'section'     => $section,
+                'type'        => $type,
+                'file_path'   => $path,
+                'title'       => $validated['title'] ?? null,
+                'caption'     => $validated['caption'] ?? null,
+                'category'    => $validated['category'] ?? null,
+                'chapter'     => $validated['chapter'] ?? null,
+                'event_date'  => $validated['event_date'] ?? null,
+                'order_index' => $maxOrder,
+            ]);
+        }
+
+        $count = count($filesToUpload);
         return redirect()->route('admin.memories.index')
-            ->with('success', 'Memory berhasil ditambahkan!');
+            ->with('success', "{$count} Memory berhasil ditambahkan!");
     }
 
     /**
@@ -86,13 +126,14 @@ class MemoryController extends Controller
     public function update(Request $request, Memory $memory): RedirectResponse
     {
         $validated = $request->validate([
-            'file'       => ['nullable', 'file', 'mimetypes:image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime,video/mpeg,video/webm', 'max:20480'],
-            'section'    => ['required', 'in:milestone,branch,gallery'],
-            'title'      => ['nullable', 'string', 'max:255'],
-            'caption'    => ['nullable', 'string'],
-            'category'   => ['nullable', 'string', 'max:255'],
-            'chapter'    => ['nullable', 'string', 'max:255'],
-            'event_date' => ['nullable', 'date'],
+            'file'        => ['nullable', 'file', 'mimetypes:image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime,video/mpeg,video/webm', 'max:20480'],
+            'youtube_url' => ['nullable', 'url'],
+            'section'     => ['required', 'in:milestone,branch,gallery'],
+            'title'       => ['nullable', 'string', 'max:255'],
+            'caption'     => ['nullable', 'string'],
+            'category'    => ['nullable', 'string', 'max:255'],
+            'chapter'     => ['nullable', 'string', 'max:255'],
+            'event_date'  => ['nullable', 'date'],
         ]);
 
         $updateData = [
@@ -104,9 +145,22 @@ class MemoryController extends Controller
             'event_date' => $validated['event_date'] ?? null,
         ];
 
-        // Jika ada file baru, hapus file lama dan simpan yang baru
-        if ($request->hasFile('file')) {
-            Storage::disk('public')->delete($memory->file_path);
+        if (!empty($validated['youtube_url'])) {
+            if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $validated['youtube_url'], $match)) {
+                // Delete old local file if previous file was local
+                if (!filter_var($memory->file_path, FILTER_VALIDATE_URL)) {
+                    Storage::disk('public')->delete($memory->file_path);
+                }
+                $updateData['type'] = 'video';
+                $updateData['file_path'] = $validated['youtube_url'];
+            } else {
+                return back()->withErrors(['youtube_url' => 'Format URL YouTube tidak valid.'])->withInput();
+            }
+        } elseif ($request->hasFile('file')) {
+            // Delete old local file if previous file was local
+            if (!filter_var($memory->file_path, FILTER_VALIDATE_URL)) {
+                Storage::disk('public')->delete($memory->file_path);
+            }
 
             $mime = $request->file('file')->getMimeType();
             $updateData['type']      = str_starts_with($mime, 'video/') ? 'video' : 'photo';
@@ -124,8 +178,10 @@ class MemoryController extends Controller
      */
     public function destroy(Memory $memory): RedirectResponse
     {
-        // Hapus file dari storage
-        Storage::disk('public')->delete($memory->file_path);
+        // Hapus file dari storage jika merupakan file lokal
+        if (!filter_var($memory->file_path, FILTER_VALIDATE_URL)) {
+            Storage::disk('public')->delete($memory->file_path);
+        }
 
         $memory->delete();
 

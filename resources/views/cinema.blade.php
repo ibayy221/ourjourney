@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galeri Kenangan — Putri Daun &amp; Ubay</title>
-    <meta name="description" content="Semua foto dan video kenangan perjalanan cinta Putri Daun dan Ubay.">
+    <title>Cinema Kenangan — Putri Daun &amp; Ubay</title>
+    <meta name="description" content="Semua video kenangan perjalanan cinta Putri Daun dan Ubay.">
 
     {{-- Public CSS --}}
     <link rel="stylesheet" href="{{ asset('css/public.css') }}">
@@ -17,30 +17,30 @@
 
 {{-- ══════════════════════════════════════════════════════════════
      NAV
-══════════════════════════════════════════════════════════════ --}}
+     ══════════════════════════════════════════════════════════════ --}}
 <nav class="pub-nav" role="navigation" aria-label="Navigasi utama">
     <a href="/" class="pub-nav__brand">Putri Daun <span>&amp;</span> Ubay</a>
     <ul class="pub-nav__links">
         <li><a href="/">Perjalanan</a></li>
-        <li><a href="/gallery" class="active">Galeri</a></li>
-        <li><a href="/cinema">Cinema</a></li>
+        <li><a href="/gallery">Galeri</a></li>
+        <li><a href="/cinema" class="active">Cinema</a></li>
     </ul>
 </nav>
 
 {{-- ══════════════════════════════════════════════════════════════
-     GALLERY HERO
-══════════════════════════════════════════════════════════════ --}}
+     CINEMA HERO
+     ══════════════════════════════════════════════════════════════ --}}
 <header class="gallery-hero" role="banner">
     <p style="font-family:'Space Mono',monospace; font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--green-soft); margin-bottom:16px;">
-        ✦ kenangan kami ✦
+        ✦ kenangan bergerak ✦
     </p>
-    <h1 class="gallery-hero__title">Galeri <em style="font-style:italic; color:var(--bloom);">Kenangan</em></h1>
-    <p class="gallery-hero__subtitle">Setiap foto adalah halaman dari buku cerita kita.</p>
+    <h1 class="gallery-hero__title">Cinema <em style="font-style:italic; color:var(--bloom);">Kenangan</em></h1>
+    <p class="gallery-hero__subtitle">Suara, gerak, dan tawa manis yang terekam selamanya.</p>
 </header>
 
 {{-- ══════════════════════════════════════════════════════════════
      CATEGORY FILTERS
-══════════════════════════════════════════════════════════════ --}}
+     ══════════════════════════════════════════════════════════════ --}}
 @php
     $categories = $items->pluck('category')->filter()->unique()->values();
 @endphp
@@ -65,16 +65,16 @@
 @endif
 
 {{-- ══════════════════════════════════════════════════════════════
-     MASONRY GRID
-══════════════════════════════════════════════════════════════ --}}
+     CINEMA GRID
+     ══════════════════════════════════════════════════════════════ --}}
 @if($items->isEmpty())
     <div class="empty-state">
-        <div class="empty-state__icon">🖼️</div>
-        <h2 class="empty-state__title">Galeri masih kosong</h2>
-        <p class="empty-state__text">Foto dan video kenangan akan tampil di sini.</p>
+        <div class="empty-state__icon">🎥</div>
+        <h2 class="empty-state__title">Cinema masih kosong</h2>
+        <p class="empty-state__text">Video kenangan akan tampil di sini.</p>
     </div>
 @else
-    <div class="masonry-grid" id="masonry-grid" role="list" aria-label="Galeri foto dan video">
+    <div class="masonry-grid cinema-grid" id="masonry-grid" role="list" aria-label="Galeri video kenangan">
         @foreach($items as $item)
             <div class="masonry-item"
                  role="listitem"
@@ -84,14 +84,31 @@
                  data-src="{{ $item['file_url'] }}"
                  data-caption="{{ $item['caption'] ?? '' }}"
                  data-category="{{ $item['category'] ?? '' }}"
-                 data-is-youtube="false"
-                 data-youtube-id=""
-                 aria-label="{{ $item['caption'] ?? 'Foto kenangan' }}"
+                 data-is-youtube="{{ $item['is_youtube'] ? 'true' : 'false' }}"
+                 data-youtube-id="{{ $item['youtube_id'] }}"
+                 aria-label="{{ $item['caption'] ?? 'Video kenangan' }}"
                  style="cursor:pointer;">
 
-                <img src="{{ $item['file_url'] }}"
-                     alt="{{ $item['caption'] ?? 'Foto kenangan' }}"
-                     loading="lazy">
+                @if($item['is_youtube'])
+                    {{-- YouTube Video: show YouTube high-quality thumbnail --}}
+                    <img src="{{ $item['thumbnail_url'] }}"
+                         alt="{{ $item['caption'] ?? 'Video kenangan' }}"
+                         loading="lazy">
+                @else
+                    {{-- Local Video: show placeholder, play on hover --}}
+                    <video src="{{ $item['file_url'] }}"
+                           muted
+                           loop
+                           playsinline
+                           preload="metadata">
+                    </video>
+                @endif
+                
+                <div class="masonry-item__play-icon" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                </div>
 
                 {{-- Hover overlay --}}
                 <div class="masonry-item__overlay" aria-hidden="true">
@@ -110,7 +127,7 @@
 
 {{-- ══════════════════════════════════════════════════════════════
      FOOTER
-══════════════════════════════════════════════════════════════ --}}
+     ══════════════════════════════════════════════════════════════ --}}
 <footer class="pub-footer" role="contentinfo">
     <p class="pub-footer__text">
         dibuat dengan <span class="pub-footer__heart">♥</span> untuk Putri Daun &amp; Ubay
@@ -120,7 +137,7 @@
 
 {{-- ══════════════════════════════════════════════════════════════
      LIGHTBOX
-══════════════════════════════════════════════════════════════ --}}
+     ══════════════════════════════════════════════════════════════ --}}
 <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Lightbox kenangan">
 
     {{-- Close button --}}

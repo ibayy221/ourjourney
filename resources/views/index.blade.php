@@ -23,7 +23,9 @@
     <ul class="pub-nav__links">
         <li><a href="#milestones" class="active">Perjalanan</a></li>
         <li><a href="#chapters">Bab</a></li>
+        <li><a href="#wishlist">Wishlist</a></li>
         <li><a href="/gallery">Galeri</a></li>
+        <li><a href="/cinema">Cinema</a></li>
     </ul>
 </nav>
 
@@ -222,6 +224,56 @@
     </div>
 </section>
 @endif
+
+{{-- ══════════════════════════════════════════════════════════════
+     WISHLIST (Daftar Impian Bersama)
+══════════════════════════════════════════════════════════════ --}}
+<section id="wishlist" class="wishlist-section" aria-label="Daftar impian bersama">
+    <div class="container">
+        <div class="wishlist-header">
+            <p class="wishlist-eyebrow">mimpi & harapan</p>
+            <h2 class="wishlist-title">Wishlist <em>Bersama</em></h2>
+            <p class="wishlist-subtitle">Hal-hal manis yang ingin kami wujudkan dan yang telah menjadi nyata 🌱</p>
+        </div>
+
+        @if($wishlists->isEmpty())
+            <div class="empty-state">
+                <div class="empty-state__icon">🌱</div>
+                <h2 class="empty-state__title">Perjalanan Mimpi Kita…</h2>
+                <p class="empty-state__text">Rencana-rencana indah akan segera muncul di sini.</p>
+            </div>
+        @else
+            <div class="wishlist-grid">
+                @foreach($wishlists as $wishlist)
+                    <div class="wishlist-item {{ $wishlist->is_completed ? 'is-completed' : '' }}">
+                        <div class="wishlist-item__status">
+                            @if($wishlist->is_completed)
+                                <div class="wishlist-item__icon-completed" title="Sudah Tercapai">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M20 6L9 17l-5-5"/>
+                                    </svg>
+                                </div>
+                            @else
+                                <div class="wishlist-item__icon-active" title="Dalam Rencana">
+                                    <span class="wishlist-item__dot"></span>
+                                </div>
+                            @endif
+                        </div>
+                        <div class="wishlist-item__info">
+                            <h3 class="wishlist-item__title">{{ $wishlist->title }}</h3>
+                            @if($wishlist->description)
+                                <p class="wishlist-item__description">{{ $wishlist->description }}</p>
+                            @endif
+                            @if($wishlist->is_completed && $wishlist->completed_at)
+                                <p class="wishlist-item__completed-at">Tercapai pada {{ $wishlist->completed_at->translatedFormat('d M Y') }}</p>
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+    </div>
+</section>
 
 {{-- ══════════════════════════════════════════════════════════════
      COUNTER — hari bersama
