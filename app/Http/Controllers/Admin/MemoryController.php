@@ -107,10 +107,12 @@ class MemoryController extends Controller
             $filesToUpload = $request->file('files');
         }
 
+        $disk = env('FILESYSTEM_DISK', 'public');
+
         foreach ($filesToUpload as $file) {
             $mime = $file->getMimeType();
             $type = str_starts_with($mime, 'video/') ? 'video' : 'photo';
-            $path = $file->store('memories', 'public');
+            $path = $file->store('memories', $disk);
 
             $maxOrder++;
 
@@ -167,10 +169,12 @@ class MemoryController extends Controller
             'event_date' => $validated['event_date'] ?? null,
         ];
 
+        $disk = env('FILESYSTEM_DISK', 'public');
+
         if (!empty($validated['direct_url'])) {
             // Delete old local file if previous file was local
             if (!filter_var($memory->file_path, FILTER_VALIDATE_URL)) {
-                Storage::disk('public')->delete($memory->file_path);
+                Storage::disk($disk)->delete($memory->file_path);
             }
             $updateData['type'] = $request->input('media_type', 'photo');
             $updateData['file_path'] = $validated['direct_url'];
@@ -178,7 +182,7 @@ class MemoryController extends Controller
             if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $validated['youtube_url'], $match)) {
                 // Delete old local file if previous file was local
                 if (!filter_var($memory->file_path, FILTER_VALIDATE_URL)) {
-                    Storage::disk('public')->delete($memory->file_path);
+                    Storage::disk($disk)->delete($memory->file_path);
                 }
                 $updateData['type'] = 'video';
                 $updateData['file_path'] = $validated['youtube_url'];
@@ -188,12 +192,12 @@ class MemoryController extends Controller
         } elseif ($request->hasFile('file')) {
             // Delete old local file if previous file was local
             if (!filter_var($memory->file_path, FILTER_VALIDATE_URL)) {
-                Storage::disk('public')->delete($memory->file_path);
+                Storage::disk($disk)->delete($memory->file_path);
             }
 
             $mime = $request->file('file')->getMimeType();
             $updateData['type']      = str_starts_with($mime, 'video/') ? 'video' : 'photo';
-            $updateData['file_path'] = $request->file('file')->store('memories', 'public');
+            $updateData['file_path'] = $request->file('file')->store('memories', $disk);
         }
 
         $memory->update($updateData);
@@ -207,9 +211,11 @@ class MemoryController extends Controller
      */
     public function destroy(Memory $memory): RedirectResponse
     {
+        $disk = env('FILESYSTEM_DISK', 'public');
+
         // Hapus file dari storage jika merupakan file lokal
         if (!filter_var($memory->file_path, FILTER_VALIDATE_URL)) {
-            Storage::disk('public')->delete($memory->file_path);
+            Storage::disk($disk)->delete($memory->file_path);
         }
 
         $memory->delete();

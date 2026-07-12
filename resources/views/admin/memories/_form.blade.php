@@ -207,6 +207,17 @@
                            :required="sourceType === 'file' && filesList.length === 0">
                 @endif
             </label>
+
+            @if(config('filesystems.default') === 'local' || config('filesystems.default') === 'public')
+                <div class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl flex gap-2 text-xs text-amber-800">
+                    <span class="text-sm">⚠️</span>
+                    <div>
+                        <strong class="font-semibold block mb-0.5">Peringatan untuk Hosting Vercel:</strong>
+                        Penyimpanan Anda saat ini diset ke mode <strong>Lokal</strong>. Karena sistem file Vercel bersifat <em>Read-Only</em>, mengunggah file langsung di tab ini akan menghasilkan error.
+                        Silakan gunakan tab <strong>🌐 Link URL Langsung</strong> (menggunakan link gambar dari ImgBB/PostImages) atau <strong>🔗 Link YouTube</strong> di atas untuk menambahkan media secara instan tanpa error.
+                    </div>
+                </div>
+            @endif
         </div>
 
         {{-- 🔗 Link YouTube Section --}}
