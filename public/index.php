@@ -17,9 +17,4 @@ require __DIR__.'/../vendor/autoload.php';
 /** @var Application $app */
 $app = require_once __DIR__.'/../bootstrap/app.php';
 
-try {
-    $app->handleRequest(Request::capture());
-} catch (\Throwable $e) {
-    file_put_contents('php://stderr', "RAW EXCEPTION: " . $e->getMessage() . "\n" . $e->getTraceAsString() . "\n");
-    throw $e;
-}
+$app->handleRequest(Request::capture());

@@ -14,9 +14,5 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->render(function (\Throwable $e) {
-            header('Content-Type: text/plain');
-            echo "REAL EXCEPTION: " . $e->getMessage() . "\n\nTrace:\n" . $e->getTraceAsString();
-            exit(1);
-        });
+        //
     })->create();
