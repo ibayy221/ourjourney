@@ -270,7 +270,7 @@
                     <video :src="directUrl" controls class="w-full h-full object-contain"></video>
                 </template>
                 <template x-if="mediaType === 'photo'">
-                    <img :src="directUrl" alt="Preview" class="w-full h-full object-contain" @error="$el.src = 'https://placehold.co/400x300?text=Format+URL+Foto+Salah'">
+                    <img :src="directUrl" alt="Preview" class="w-full h-full object-contain" x-on:error="$el.src = 'https://placehold.co/400x300?text=Format+URL+Foto+Salah'">
                 </template>
             </div>
         </div>
