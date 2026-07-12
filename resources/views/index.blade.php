@@ -229,49 +229,49 @@
                 <h3 class="branch-chapter__title">{{ $items->first()->chapter ?? $chapterName }}</h3>
                 <div class="branch-grid">
                     @foreach($items as $item)
-                        <div class="branch-item" tabindex="0"
-                             aria-label="{{ $item->caption ?? 'Memory' }}" style="overflow: hidden; position: relative;">
-                            @if($item->media->count() > 1)
-                                <div class="media-carousel" x-data="{ activeIndex: 0, total: {{ $item->media->count() }} }" style="width:100%;height:100%;">
-                                    <div class="media-carousel__track" :style="'transform: translateX(-' + (activeIndex * 100) + '%)'" style="width:100%;height:100%;">
-                                        @foreach($item->media as $mediaItem)
-                                            <div class="media-carousel__slide" style="width:100%;height:100%;">
-                                                @if($mediaItem->type === 'video')
-                                                    @if($mediaItem->is_youtube)
-                                                        <iframe src="https://www.youtube.com/embed/{{ $mediaItem->youtube_id }}" frameborder="0" allowfullscreen class="w-full h-full object-cover"></iframe>
+                        <div class="branch-card">
+                            <div class="branch-item" tabindex="0"
+                                 aria-label="{{ $item->caption ?? 'Memory' }}" style="overflow: hidden; position: relative;">
+                                @if($item->media->count() > 1)
+                                    <div class="media-carousel" x-data="{ activeIndex: 0, total: {{ $item->media->count() }} }" style="width:100%;height:100%;">
+                                        <div class="media-carousel__track" :style="'transform: translateX(-' + (activeIndex * 100) + '%)'" style="width:100%;height:100%;">
+                                            @foreach($item->media as $mediaItem)
+                                                <div class="media-carousel__slide" style="width:100%;height:100%;">
+                                                    @if($mediaItem->type === 'video')
+                                                        @if($mediaItem->is_youtube)
+                                                            <iframe src="https://www.youtube.com/embed/{{ $mediaItem->youtube_id }}" frameborder="0" allowfullscreen class="w-full h-full object-cover"></iframe>
+                                                        @else
+                                                            <video src="{{ $mediaItem->file_url }}" muted loop playsinline class="w-full h-full object-cover"></video>
+                                                        @endif
                                                     @else
-                                                        <video src="{{ $mediaItem->file_url }}" muted loop playsinline class="w-full h-full object-cover"></video>
+                                                        <img src="{{ $mediaItem->file_url }}" alt="{{ $item->caption ?? 'Kenangan' }}" class="w-full h-full object-cover" loading="lazy">
                                                     @endif
-                                                @else
-                                                    <img src="{{ $mediaItem->file_url }}" alt="{{ $item->caption ?? 'Kenangan' }}" class="w-full h-full object-cover" loading="lazy">
-                                                @endif
-                                            </div>
-                                        @endforeach
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                        <button class="media-carousel__btn is-prev" @click.stop="activeIndex = (activeIndex === 0) ? total - 1 : activeIndex - 1" x-show="total > 1" style="font-size: 1.2rem;">‹</button>
+                                        <button class="media-carousel__btn is-next" @click.stop="activeIndex = (activeIndex === total - 1) ? 0 : activeIndex + 1" x-show="total > 1" style="font-size: 1.2rem;">›</button>
+                                        <div class="media-carousel__indicators" x-show="total > 1">
+                                            <template x-for="(mItem, idx) in total" :key="idx">
+                                                <span class="media-carousel__dot" :class="activeIndex === idx ? 'is-active' : ''" @click.stop="activeIndex = idx"></span>
+                                            </template>
+                                        </div>
                                     </div>
-                                    <button class="media-carousel__btn is-prev" @click.stop="activeIndex = (activeIndex === 0) ? total - 1 : activeIndex - 1" x-show="total > 1" style="font-size: 1.2rem;">‹</button>
-                                    <button class="media-carousel__btn is-next" @click.stop="activeIndex = (activeIndex === total - 1) ? 0 : activeIndex + 1" x-show="total > 1" style="font-size: 1.2rem;">›</button>
-                                    <div class="media-carousel__indicators" x-show="total > 1">
-                                        <template x-for="(mItem, idx) in total" :key="idx">
-                                            <span class="media-carousel__dot" :class="activeIndex === idx ? 'is-active' : ''" @click.stop="activeIndex = idx"></span>
-                                        </template>
-                                    </div>
-                                </div>
-                            @elseif($item->media->count() === 1)
-                                @php $mediaItem = $item->media->first(); @endphp
-                                @if($mediaItem->type === 'video')
-                                    @if($mediaItem->is_youtube)
-                                        <iframe src="https://www.youtube.com/embed/{{ $mediaItem->youtube_id }}" frameborder="0" allowfullscreen style="width:100%;height:100%;object-fit:cover;"></iframe>
+                                @elseif($item->media->count() === 1)
+                                    @php $mediaItem = $item->media->first(); @endphp
+                                    @if($mediaItem->type === 'video')
+                                        @if($mediaItem->is_youtube)
+                                            <iframe src="https://www.youtube.com/embed/{{ $mediaItem->youtube_id }}" frameborder="0" allowfullscreen style="width:100%;height:100%;object-fit:cover;"></iframe>
+                                        @else
+                                            <video src="{{ $mediaItem->file_url }}" muted loop playsinline style="width:100%;height:100%;object-fit:cover;"></video>
+                                        @endif
                                     @else
-                                        <video src="{{ $mediaItem->file_url }}" muted loop playsinline style="width:100%;height:100%;object-fit:cover;"></video>
+                                        <img src="{{ $mediaItem->file_url }}" alt="{{ $item->caption ?? 'Kenangan' }}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">
                                     @endif
-                                @else
-                                    <img src="{{ $mediaItem->file_url }}" alt="{{ $item->caption ?? 'Kenangan' }}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">
                                 @endif
-                            @endif
+                            </div>
                             @if($item->caption)
-                                <div class="branch-item__overlay">
-                                    <p class="branch-item__caption">{{ $item->caption }}</p>
-                                </div>
+                                <p class="branch-card__caption">{{ $item->caption }}</p>
                             @endif
                         </div>
                     @endforeach

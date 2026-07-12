@@ -392,6 +392,21 @@ a { color: inherit; text-decoration: none; }
   gap: 16px;
 }
 
+.branch-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.branch-card__caption {
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  line-height: 1.6;
+  text-align: left;
+  padding: 0 4px;
+  font-family: inherit;
+}
+
 .branch-item {
   border-radius: var(--radius-md);
   overflow: hidden;
