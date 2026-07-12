@@ -107,7 +107,7 @@ class MemoryController extends Controller
             $filesToUpload = $request->file('files');
         }
 
-        $disk = env('FILESYSTEM_DISK', 'public');
+        $disk = config('filesystems.default');
 
         foreach ($filesToUpload as $file) {
             $mime = $file->getMimeType();
@@ -169,7 +169,7 @@ class MemoryController extends Controller
             'event_date' => $validated['event_date'] ?? null,
         ];
 
-        $disk = env('FILESYSTEM_DISK', 'public');
+        $disk = config('filesystems.default');
 
         if (!empty($validated['direct_url'])) {
             // Delete old local file if previous file was local
@@ -211,7 +211,7 @@ class MemoryController extends Controller
      */
     public function destroy(Memory $memory): RedirectResponse
     {
-        $disk = env('FILESYSTEM_DISK', 'public');
+        $disk = config('filesystems.default');
 
         // Hapus file dari storage jika merupakan file lokal
         if (!filter_var($memory->file_path, FILTER_VALIDATE_URL)) {
