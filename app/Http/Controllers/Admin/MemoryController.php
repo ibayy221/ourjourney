@@ -109,14 +109,6 @@ class MemoryController extends Controller
 
         $disk = config('filesystems.default');
 
-        $keys = array_keys($_ENV);
-        $filteredKeys = array_filter($keys, function($key) {
-            return str_starts_with($key, 'AWS_') || str_starts_with($key, 'FILESYSTEM_') || str_contains($key, 'DISK') || str_contains($key, 'BUCKET');
-        });
-        dd([
-            'disk' => $disk,
-            'filtered_keys' => array_intersect_key($_ENV, array_flip($filteredKeys)),
-        ]);
 
         foreach ($filesToUpload as $file) {
             $mime = $file->getMimeType();
