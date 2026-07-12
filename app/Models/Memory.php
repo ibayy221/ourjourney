@@ -52,6 +52,12 @@ class Memory extends Model
         return $this->first_media?->file_url ?? '';
     }
 
+    // Accessor: tipe media (photo/video) (fallback)
+    public function getTypeAttribute(): string
+    {
+        return $this->first_media?->type ?? 'photo';
+    }
+
     // Accessor: apakah ini link YouTube? (fallback)
     public function getIsYoutubeAttribute(): bool
     {

@@ -176,7 +176,7 @@
 </div>
 
 {{-- Gallery JS --}}
-<script src="{{ asset('js/gallery.js') }}"></script>
+<script src="{{ asset('js/gallery.js') }}?v=1.0.5"></script>
 
 {{-- Keyboard accessibility: open lightbox on Enter/Space --}}
 <script>
