@@ -9,7 +9,7 @@
 
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
     {{-- Public CSS (design tokens + animations) --}}
-    <link rel="stylesheet" href="{{ asset('css/public.css') }}?v=1.1.0">
+    <link rel="stylesheet" href="{{ asset('css/public.css') }}?v=1.1.1">
 
     {{-- GSAP 3 + ScrollTrigger via CDN --}}
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
@@ -415,7 +415,7 @@
         </svg>
     </button>
     <audio id="bg-audio" loop preload="auto">
-        <source src="{{ asset('audio/night-ambient.mp3') }}" type="audio/mpeg">
+        <source src="{{ asset('audio/piano-ambient.mp3') }}" type="audio/mpeg">
     </audio>
 </div>
 
