@@ -248,15 +248,29 @@ a { color: inherit; text-decoration: none; }
 
 .milestone-card.is-left .milestone-card__content {
   grid-column: 1;
+  grid-row: 1;
   text-align: right;
 }
-.milestone-card.is-left .milestone-card__dot { grid-column: 2; }
-.milestone-card.is-left .milestone-card__media { grid-column: 3; }
+.milestone-card.is-left .milestone-card__dot {
+  grid-column: 2;
+  grid-row: 1;
+}
+.milestone-card.is-left .milestone-card__media {
+  grid-column: 3;
+  grid-row: 1;
+}
 
-.milestone-card.is-right .milestone-card__media { grid-column: 1; }
-.milestone-card.is-right .milestone-card__dot { grid-column: 2; }
+.milestone-card.is-right .milestone-card__media {
+  grid-column: 1;
+  grid-row: 1;
+}
+.milestone-card.is-right .milestone-card__dot {
+  grid-column: 2;
+  grid-row: 1;
+}
 .milestone-card.is-right .milestone-card__content {
   grid-column: 3;
+  grid-row: 1;
   text-align: left;
 }
 
