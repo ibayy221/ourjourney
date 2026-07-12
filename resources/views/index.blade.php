@@ -7,6 +7,7 @@
     <title>Putri Daun & Ubay  Our Journey</title>
     <meta name="description" content="Sebuah catatan perjalanan cinta kami — Putri Daun dan Ubay. Dari benih kecil yang tumbuh menjadi pohon yang kuat.">
 
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
     {{-- Public CSS (design tokens + animations) --}}
     <link rel="stylesheet" href="{{ asset('css/public.css') }}?v=1.0.5">
 

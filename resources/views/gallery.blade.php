@@ -7,6 +7,7 @@
     <title>Galeri Kenangan — Putri Daun &amp; Ubay</title>
     <meta name="description" content="Semua foto dan video kenangan perjalanan cinta Putri Daun dan Ubay.">
 
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
     {{-- Public CSS --}}
     <link rel="stylesheet" href="{{ asset('css/public.css') }}?v=1.0.5">
 
