@@ -20,36 +20,58 @@
     ])->toArray() : [];
 @endphp
 
-<div x-data="{
-    section: '{{ $section }}',
-    showTitle()   { return this.section === 'milestone'; },
-    showChapter() { return this.section === 'milestone' || this.section === 'branch'; },
-    showDate()    { return this.section === 'milestone'; },
-    
-    // --- SINGLE MEDIA (Khusus Section Gallery) ---
-    sourceType: '{{ $isEdit && $isEdit && $memory->is_youtube ? 'youtube' : ($isEdit && filter_var($memory->file_path, FILTER_VALIDATE_URL) ? 'direct' : 'file') }}',
-    previewUrl: '{{ $isEdit && !$memory->is_youtube && !filter_var($memory->file_path, FILTER_VALIDATE_URL) ? $memory->file_url : '' }}',
-    previewType: '{{ $isEdit && !$memory->is_youtube && !filter_var($memory->file_path, FILTER_VALIDATE_URL) ? $memory->type : '' }}',
-    youtubeUrl: '{{ $isEdit && $memory->is_youtube ? $memory->file_path : '' }}',
-    youtubeId: '{{ $isEdit && $memory->is_youtube ? $memory->youtube_id : '' }}',
-    directUrl: '{{ $isEdit && !$memory->is_youtube && filter_var($memory->file_path, FILTER_VALIDATE_URL) ? $memory->file_path : '' }}',
-    mediaType: '{{ $isEdit ? $memory->type : 'photo' }}',
-    
-    // --- MULTI MEDIA (Khusus Section Milestone & Branch) ---
-    mediaList: @json($existingMedia),
-    rawFiles: [], // Menyimpan file asli yang diunggah
-    
-    // Input bantu untuk modal tambah URL
-    inputUrl: '',
-    inputUrlType: 'youtube', // 'youtube' atau 'direct'
-    inputDirectType: 'photo', // 'photo' atau 'video'
-    showUrlModal: false,
+<div id="memory-form-container"
+     data-section="{{ $section }}"
+     data-is-edit="{{ $isEdit ? 'true' : 'false' }}"
+     data-source-type="{{ $isEdit && $memory->is_youtube ? 'youtube' : ($isEdit && filter_var($memory->file_path, FILTER_VALIDATE_URL) ? 'direct' : 'file') }}"
+     data-preview-url="{{ $isEdit && !$memory->is_youtube && !filter_var($memory->file_path, FILTER_VALIDATE_URL) ? $memory->file_url : '' }}"
+     data-preview-type="{{ $isEdit && !$memory->is_youtube && !filter_var($memory->file_path, FILTER_VALIDATE_URL) ? $memory->type : '' }}"
+     data-youtube-url="{{ $isEdit && $memory->is_youtube ? $memory->file_path : '' }}"
+     data-youtube-id="{{ $isEdit && $memory->is_youtube ? $memory->youtube_id : '' }}"
+     data-direct-url="{{ $isEdit && !$memory->is_youtube && filter_var($memory->file_path, FILTER_VALIDATE_URL) ? $memory->file_path : '' }}"
+     data-media-type="{{ $isEdit ? $memory->type : 'photo' }}"
+     data-existing-media='@json($existingMedia)'
+     x-data="{
+        section: '',
+        isEdit: false,
+        sourceType: 'file',
+        previewUrl: '',
+        previewType: '',
+        youtubeUrl: '',
+        youtubeId: '',
+        directUrl: '',
+        mediaType: 'photo',
+        mediaList: [],
+        rawFiles: [], // Menyimpan file asli yang diunggah
+        
+        // Input bantu untuk modal tambah URL
+        inputUrl: '',
+        inputUrlType: 'youtube', // 'youtube' atau 'direct'
+        inputDirectType: 'photo', // 'photo' atau 'video'
+        showUrlModal: false,
 
-    init() {
-        this.$watch('youtubeUrl', value => {
-            this.youtubeId = this.parseYoutubeId(value);
-        });
-    },
+        showTitle()   { return this.section === 'milestone'; },
+        showChapter() { return this.section === 'milestone' || this.section === 'branch'; },
+        showDate()    { return this.section === 'milestone'; },
+
+        init() {
+            // Load dari data-attributes
+            const el = this.$el;
+            this.section = el.dataset.section || 'gallery';
+            this.isEdit = el.dataset.isEdit === 'true';
+            this.sourceType = el.dataset.sourceType || 'file';
+            this.previewUrl = el.dataset.previewUrl || '';
+            this.previewType = el.dataset.previewType || '';
+            this.youtubeUrl = el.dataset.youtubeUrl || '';
+            this.youtubeId = el.dataset.youtubeId || '';
+            this.directUrl = el.dataset.directUrl || '';
+            this.mediaType = el.dataset.mediaType || 'photo';
+            this.mediaList = JSON.parse(el.dataset.existingMedia || '[]');
+
+            this.$watch('youtubeUrl', value => {
+                this.youtubeId = this.parseYoutubeId(value);
+            });
+        },
     
     parseYoutubeId(url) {
         if (!url) return '';
