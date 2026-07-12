@@ -41,6 +41,8 @@ class MemoryController extends Controller
             'files'       => ['nullable', 'array'],
             'files.*'     => ['file', 'mimetypes:image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime,video/mpeg,video/webm', 'max:20480'],
             'youtube_url' => ['nullable', 'url'],
+            'direct_url'  => ['nullable', 'url'],
+            'media_type'  => ['nullable', 'in:photo,video'],
             'section'     => ['required', 'in:milestone,branch,gallery'],
             'title'       => ['nullable', 'string', 'max:255'],
             'caption'     => ['nullable', 'string'],
@@ -49,12 +51,30 @@ class MemoryController extends Controller
             'event_date'  => ['nullable', 'date'],
         ]);
 
-        if (!$request->hasFile('file') && !$request->hasFile('files') && empty($validated['youtube_url'])) {
-            return back()->withErrors(['file' => 'Pilih setidaknya satu file untuk diupload atau isi link YouTube.'])->withInput();
+        if (!$request->hasFile('file') && !$request->hasFile('files') && empty($validated['youtube_url']) && empty($validated['direct_url'])) {
+            return back()->withErrors(['file' => 'Pilih setidaknya satu file untuk diupload, isi link YouTube, atau masukkan URL media langsung.'])->withInput();
         }
 
         $section = $validated['section'];
         $maxOrder = Memory::section($section)->max('order_index') ?? -1;
+
+        if (!empty($validated['direct_url'])) {
+            $maxOrder++;
+            Memory::create([
+                'section'     => $section,
+                'type'        => $request->input('media_type', 'photo'),
+                'file_path'   => $validated['direct_url'],
+                'title'       => $validated['title'] ?? null,
+                'caption'     => $validated['caption'] ?? null,
+                'category'    => $validated['category'] ?? null,
+                'chapter'     => $validated['chapter'] ?? null,
+                'event_date'  => $validated['event_date'] ?? null,
+                'order_index' => $maxOrder,
+            ]);
+
+            return redirect()->route('admin.memories.index')
+                ->with('success', 'Media URL langsung berhasil ditambahkan!');
+        }
 
         if (!empty($validated['youtube_url'])) {
             // Regex to check if it's a valid YouTube link
@@ -128,6 +148,8 @@ class MemoryController extends Controller
         $validated = $request->validate([
             'file'        => ['nullable', 'file', 'mimetypes:image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime,video/mpeg,video/webm', 'max:20480'],
             'youtube_url' => ['nullable', 'url'],
+            'direct_url'  => ['nullable', 'url'],
+            'media_type'  => ['nullable', 'in:photo,video'],
             'section'     => ['required', 'in:milestone,branch,gallery'],
             'title'       => ['nullable', 'string', 'max:255'],
             'caption'     => ['nullable', 'string'],
@@ -145,7 +167,14 @@ class MemoryController extends Controller
             'event_date' => $validated['event_date'] ?? null,
         ];
 
-        if (!empty($validated['youtube_url'])) {
+        if (!empty($validated['direct_url'])) {
+            // Delete old local file if previous file was local
+            if (!filter_var($memory->file_path, FILTER_VALIDATE_URL)) {
+                Storage::disk('public')->delete($memory->file_path);
+            }
+            $updateData['type'] = $request->input('media_type', 'photo');
+            $updateData['file_path'] = $validated['direct_url'];
+        } elseif (!empty($validated['youtube_url'])) {
             if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $validated['youtube_url'], $match)) {
                 // Delete old local file if previous file was local
                 if (!filter_var($memory->file_path, FILTER_VALIDATE_URL)) {

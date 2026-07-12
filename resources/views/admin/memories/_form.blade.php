@@ -16,12 +16,12 @@
     showChapter() { return this.section === 'milestone' || this.section === 'branch'; },
     showDate()    { return this.section === 'milestone'; },
     
-    // Media Source: 'file' or 'youtube'
-    sourceType: '{{ $isEdit && $memory->is_youtube ? 'youtube' : 'file' }}',
+    // Media Source: 'file', 'youtube', or 'direct'
+    sourceType: '{{ $isEdit && $memory->is_youtube ? 'youtube' : ($isEdit && filter_var($memory->file_path, FILTER_VALIDATE_URL) ? 'direct' : 'file') }}',
     
     // For single file (edit mode)
-    previewUrl: '{{ $isEdit && !$memory->is_youtube ? $memory->file_url : '' }}',
-    previewType: '{{ $isEdit && !$memory->is_youtube ? $memory->type : '' }}',
+    previewUrl: '{{ $isEdit && !$memory->is_youtube && !filter_var($memory->file_path, FILTER_VALIDATE_URL) ? $memory->file_url : '' }}',
+    previewType: '{{ $isEdit && !$memory->is_youtube && !filter_var($memory->file_path, FILTER_VALIDATE_URL) ? $memory->type : '' }}',
     
     // For multiple files (create mode)
     filesList: [],
@@ -30,6 +30,10 @@
     // For YouTube input
     youtubeUrl: '{{ $isEdit && $memory->is_youtube ? $memory->file_path : '' }}',
     youtubeId: '{{ $isEdit && $memory->is_youtube ? $memory->youtube_id : '' }}',
+    
+    // For Direct URL input
+    directUrl: '{{ $isEdit && !$memory->is_youtube && filter_var($memory->file_path, FILTER_VALIDATE_URL) ? $memory->file_path : '' }}',
+    mediaType: '{{ $isEdit ? $memory->type : 'photo' }}',
     
     init() {
         this.$watch('youtubeUrl', value => {
@@ -108,6 +112,11 @@
                     :class="sourceType === 'youtube' ? 'bg-white shadow text-green-deep font-semibold' : 'text-gray-500 hover:text-gray-700'"
                     class="rounded-lg px-4 py-1.5 text-xs transition-all">
                 🔗 Link YouTube
+            </button>
+            <button type="button" @click="sourceType = 'direct'"
+                    :class="sourceType === 'direct' ? 'bg-white shadow text-green-deep font-semibold' : 'text-gray-500 hover:text-gray-700'"
+                    class="rounded-lg px-4 py-1.5 text-xs transition-all">
+                🌐 Link URL Langsung
             </button>
         </div>
 
@@ -224,6 +233,45 @@
                             allowfullscreen>
                     </iframe>
                 </div>
+            </div>
+        </div>
+
+        {{-- 🌐 Link URL Langsung Section --}}
+        <div x-show="sourceType === 'direct'" x-cloak class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="sm:col-span-2">
+                    <label for="direct_url" class="block text-sm font-medium text-gray-700 mb-2">
+                        URL Media (Foto/Video) <span class="text-red-500">*</span>
+                    </label>
+                    <input type="url" id="direct_url" name="direct_url" 
+                           x-model="directUrl"
+                           placeholder="Contoh: https://i.ibb.co/xxxxxx/foto.jpg"
+                           class="w-full rounded-lg border-gray-300 shadow-sm focus:border-green-deep focus:ring-green-deep text-sm"
+                           :required="sourceType === 'direct' && !'{{ $isEdit }}'">
+                </div>
+                <div>
+                    <label for="media_type" class="block text-sm font-medium text-gray-700 mb-2">
+                        Tipe Media <span class="text-red-500">*</span>
+                    </label>
+                    <select id="media_type" name="media_type" x-model="mediaType"
+                            class="w-full rounded-lg border-gray-300 shadow-sm focus:border-green-deep focus:ring-green-deep text-sm">
+                        <option value="photo">📷 Foto</option>
+                        <option value="video">🎥 Video</option>
+                    </select>
+                </div>
+            </div>
+            <p class="mt-1 text-xs text-gray-400">
+                Gunakan ini untuk memasukkan URL langsung dari file gambar/video yang di-host di luar (seperti ImgBB, PostImages, Google Drive, dll.).
+            </p>
+            
+            {{-- Preview of Direct URL --}}
+            <div x-show="directUrl && directUrl.startsWith('http')" class="mt-4 rounded-xl overflow-hidden bg-gray-100 max-w-xs border border-gray-200 shadow-sm relative h-36" x-cloak>
+                <template x-if="mediaType === 'video'">
+                    <video :src="directUrl" controls class="w-full h-full object-contain"></video>
+                </template>
+                <template x-if="mediaType === 'photo'">
+                    <img :src="directUrl" alt="Preview" class="w-full h-full object-contain" @error="$el.src = 'https://placehold.co/400x300?text=Format+URL+Foto+Salah'">
+                </template>
             </div>
         </div>
 
