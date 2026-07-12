@@ -19,6 +19,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body>
+<canvas id="fireflies-canvas" class="fireflies-canvas" aria-hidden="true"></canvas>
 
 {{-- ══════════════════════════════════════════════════════════════
      NAVIGATION

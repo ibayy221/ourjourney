@@ -362,7 +362,112 @@
     window.addEventListener('scroll', handleFirstInteraction, { once: true });
   }
 
+  // ── Floating Fireflies (Kunang-Kunang) Canvas ──────────────────
+  function initFireflies() {
+    const canvas = document.getElementById('fireflies-canvas');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    const particles = [];
+    const particleCount = Math.min(35, Math.floor((width * height) / 30000));
+
+    class Particle {
+      constructor() {
+        this.reset();
+        this.y = Math.random() * height;
+      }
+
+      reset() {
+        this.x = Math.random() * width;
+        this.y = height + Math.random() * 20;
+        this.size = Math.random() * 2 + 1;
+        this.speedY = -(Math.random() * 0.4 + 0.2);
+        this.speedX = 0;
+        this.angle = Math.random() * Math.PI * 2;
+        this.swaySpeed = Math.random() * 0.02 + 0.01;
+        this.swayAmplitude = Math.random() * 0.5 + 0.2;
+        this.opacity = 0;
+        this.maxOpacity = Math.random() * 0.5 + 0.3;
+        this.fadeSpeed = Math.random() * 0.01 + 0.005;
+        this.fadingIn = true;
+      }
+
+      update() {
+        this.y += this.speedY;
+        this.angle += this.swaySpeed;
+        this.x += Math.sin(this.angle) * this.swayAmplitude;
+
+        if (this.fadingIn) {
+          this.opacity += this.fadeSpeed;
+          if (this.opacity >= this.maxOpacity) {
+            this.opacity = this.maxOpacity;
+            this.fadingIn = false;
+          }
+        } else {
+          if (this.y < height * 0.15) {
+            this.opacity -= this.fadeSpeed * 1.5;
+          }
+        }
+
+        if (this.y < -10 || (this.opacity <= 0 && !this.fadingIn)) {
+          this.reset();
+        }
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(229, 192, 123, ${this.opacity})`;
+        ctx.shadowBlur = this.size * 3;
+        ctx.shadowColor = 'rgba(229, 192, 123, 0.8)';
+        ctx.fill();
+      }
+    }
+
+    for (let i = 0; i < particleCount; i++) {
+      particles.push(new Particle());
+    }
+
+    let animationFrameId = null;
+    let isTabActive = true;
+
+    function animate() {
+      if (!isTabActive) return;
+      ctx.shadowBlur = 0;
+      ctx.clearRect(0, 0, width, height);
+
+      particles.forEach((p) => {
+        p.update();
+        p.draw();
+      });
+
+      animationFrameId = requestAnimationFrame(animate);
+    }
+
+    function handleResize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', handleResize, { passive: true });
+
+    document.addEventListener('visibilitychange', () => {
+      isTabActive = !document.hidden;
+      if (isTabActive) {
+        animate();
+      } else {
+        cancelAnimationFrame(animationFrameId);
+      }
+    });
+
+    animate();
+  }
+
   initBranchVideoPlay();
   initBackgroundAudio();
+  initFireflies();
 
 })();

@@ -1371,3 +1371,15 @@ a { color: inherit; text-decoration: none; }
 .music-ctrl.is-playing .music-ctrl__wave {
   display: flex;
 }
+
+/* ── Floating Fireflies Background Canvas ────────────────── */
+.fireflies-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0;
+  mix-blend-mode: screen;
+}

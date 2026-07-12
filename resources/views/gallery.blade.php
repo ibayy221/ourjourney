@@ -16,6 +16,7 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 </head>
 <body>
+<canvas id="fireflies-canvas" class="fireflies-canvas" aria-hidden="true"></canvas>
 
 {{-- ══════════════════════════════════════════════════════════════
      NAV
@@ -160,7 +161,7 @@
 </div>
 
 {{-- Gallery JS --}}
-<script src="{{ asset('js/gallery.js') }}?v=1.0.5"></script>
+<script src="{{ asset('js/gallery.js') }}?v=1.0.6"></script>
 
 {{-- Keyboard accessibility: open lightbox on Enter/Space --}}
 <script>
