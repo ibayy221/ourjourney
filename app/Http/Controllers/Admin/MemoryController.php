@@ -108,6 +108,15 @@ class MemoryController extends Controller
         }
 
         $disk = config('filesystems.default');
+        
+        dd([
+            'disk' => $disk,
+            'env_filesystem_disk' => env('FILESYSTEM_DISK'),
+            'env_aws_bucket' => env('AWS_BUCKET'),
+            'config_aws_bucket' => config('filesystems.disks.s3.bucket'),
+            'aws_endpoint' => config('filesystems.disks.s3.endpoint'),
+            'all_env' => $_ENV,
+        ]);
 
         foreach ($filesToUpload as $file) {
             $mime = $file->getMimeType();
