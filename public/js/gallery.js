@@ -19,6 +19,7 @@
   const grid = document.getElementById('masonry-grid');
   const lightbox = document.getElementById('lightbox');
   const lbMedia = document.getElementById('lb-media');
+  const lbGlow = document.getElementById('lb-glow');
   const lbCaption = document.getElementById('lb-caption');
   const lbClose = document.getElementById('lb-close');
   const lbPrev = document.getElementById('lb-prev');
@@ -125,20 +126,35 @@
     // Pause any playing video
     const video = lbMedia.querySelector('video');
     if (video) video.pause();
+
+    if (lbGlow) {
+      const glowVideo = lbGlow.querySelector('video');
+      if (glowVideo) glowVideo.pause();
+    }
   }
 
   function renderLightboxMedia(item) {
     lbMedia.innerHTML = '';
+    if (lbGlow) lbGlow.innerHTML = '';
     lbCaption.textContent = item.caption;
 
     if (item.type === 'video') {
       if (item.isYoutube && item.youtubeId) {
+        // Main video player
         const iframe = document.createElement('iframe');
         iframe.src = `https://www.youtube.com/embed/${item.youtubeId}?autoplay=1&rel=0`;
         iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
         iframe.allowFullscreen = true;
         lbMedia.appendChild(iframe);
+
+        // Ambient glow (blurred youtube thumbnail image)
+        if (lbGlow) {
+          const glowImg = document.createElement('img');
+          glowImg.src = `https://img.youtube.com/vi/${item.youtubeId}/hqdefault.jpg`;
+          lbGlow.appendChild(glowImg);
+        }
       } else {
+        // Main video player
         const video = document.createElement('video');
         video.src = item.src;
         video.controls = true;
@@ -146,12 +162,43 @@
         video.playsInline = true;
         video.muted = false;
         lbMedia.appendChild(video);
+
+        // Ambient glow (blurred duplicated video element, muted, synced)
+        if (lbGlow) {
+          const glowVideo = document.createElement('video');
+          glowVideo.src = item.src;
+          glowVideo.autoplay = true;
+          glowVideo.loop = true;
+          glowVideo.muted = true;
+          glowVideo.playsInline = true;
+          lbGlow.appendChild(glowVideo);
+
+          // Sync the time of the glow video with the main video
+          video.addEventListener('timeupdate', () => {
+            if (Math.abs(glowVideo.currentTime - video.currentTime) > 0.3) {
+              glowVideo.currentTime = video.currentTime;
+            }
+          });
+          video.addEventListener('play', () => glowVideo.play().catch(() => {}));
+          video.addEventListener('pause', () => {
+            glowVideo.pause();
+          });
+        }
       }
     } else {
+      // Main image
       const img = document.createElement('img');
       img.src = item.src;
       img.alt = item.caption || 'Memory';
       lbMedia.appendChild(img);
+
+      // Ambient glow (blurred copy of same image)
+      if (lbGlow) {
+        const glowImg = document.createElement('img');
+        glowImg.src = item.src;
+        glowImg.alt = '';
+        lbGlow.appendChild(glowImg);
+      }
     }
   }
 
