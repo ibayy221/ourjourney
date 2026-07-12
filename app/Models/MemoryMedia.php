@@ -46,7 +46,7 @@ class MemoryMedia extends Model
             return null;
         }
         
-        if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $this->file_path, $match)) {
+        if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|shorts/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $this->file_path, $match)) {
             return $match[1];
         }
         
