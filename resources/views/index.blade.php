@@ -9,7 +9,7 @@
 
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
     {{-- Public CSS (design tokens + animations) --}}
-    <link rel="stylesheet" href="{{ asset('css/public.css') }}?v=1.1.1">
+    <link rel="stylesheet" href="{{ asset('css/public.css') }}?v=1.1.2">
 
     {{-- GSAP 3 + ScrollTrigger via CDN --}}
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
@@ -39,7 +39,16 @@
      HERO
 ══════════════════════════════════════════════════════════════ --}}
 <section class="hero" id="hero" aria-label="Hero">
-    {{-- Decorative background petal blobs --}}
+    <!-- Parallax Layer 1: Background Forest -->
+    <div class="hero__parallax-bg" id="parallax-bg" aria-hidden="true"></div>
+    
+    <!-- Parallax Layer 2: Glowing Mist -->
+    <div class="hero__parallax-mist" id="parallax-mist" aria-hidden="true"></div>
+
+    <!-- Parallax Layer 3: Foreground Hanging Leaves -->
+    <div class="hero__parallax-fg" id="parallax-fg" aria-hidden="true"></div>
+
+    <!-- Decorative background petal blobs (retained) -->
     <div class="hero__bg-petals" aria-hidden="true">
         <svg width="100%" height="100%" viewBox="0 0 1200 800" fill="none" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
             <circle cx="200" cy="150" r="320" fill="rgba(143,162,131,0.08)"/>
@@ -48,11 +57,13 @@
         </svg>
     </div>
 
-    <p class="hero__eyebrow">✦ sebuah perjalanan cinta ✦</p>
-    <h1 class="hero__title">Our <em>Journey</em></h1>
-    <p class="hero__subtitle">Dari benih kecil yang jatuh, tumbuh sebuah pohon yang kuat — milik kami berdua.</p>
-
-    <div class="hero__seed" aria-hidden="true" title="Benih cinta kami"></div>
+    <!-- Hero Content Layer -->
+    <div class="hero__content">
+        <p class="hero__eyebrow">✦ sebuah perjalanan cinta ✦</p>
+        <h1 class="hero__title">Our <em>Journey</em></h1>
+        <p class="hero__subtitle">Dari benih kecil yang jatuh, tumbuh sebuah pohon yang kuat — milik kami berdua.</p>
+        <div class="hero__seed" aria-hidden="true" title="Benih cinta kami"></div>
+    </div>
 
     <a href="#milestones" class="hero__scroll-hint" aria-label="Gulir ke bawah">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -421,7 +432,7 @@
 </div>
 
 {{-- Script --}}
-<script src="{{ asset('js/script.js') }}?v=1.0.9"></script>
+<script src="{{ asset('js/script.js') }}?v=1.1.2"></script>
 
 {{-- Milestone videos: autoplay on scroll ─────────── --}}
 <script>

@@ -466,8 +466,81 @@
     animate();
   }
 
+  // ── 3D Forest Parallax Effect ────────────────────────────────
+  function init3DParallax() {
+    const hero = document.getElementById('hero');
+    const bg = document.getElementById('parallax-bg');
+    const mist = document.getElementById('parallax-mist');
+    const fg = document.getElementById('parallax-fg');
+    const content = document.querySelector('.hero__content');
+
+    if (!hero || !bg || !fg) return;
+
+    let targetX = 0;
+    let targetY = 0;
+    let currentX = 0;
+    let currentY = 0;
+    const ease = 0.08;
+
+    window.addEventListener('mousemove', (e) => {
+      const nx = (e.clientX / window.innerWidth) - 0.5;
+      const ny = (e.clientY / window.innerHeight) - 0.5;
+      targetX = nx * 30;
+      targetY = ny * 20;
+    }, { passive: true });
+
+    let hasGyro = false;
+    window.addEventListener('deviceorientation', (e) => {
+      if (e.beta === null || e.gamma === null) return;
+      hasGyro = true;
+      const tiltX = Math.max(-30, Math.min(30, e.gamma));
+      const tiltY = Math.max(-30, Math.min(30, e.beta - 45));
+      targetX = (tiltX / 30) * 35;
+      targetY = (tiltY / 30) * 25;
+    }, { passive: true });
+
+    function updateParallax() {
+      currentX += (targetX - currentX) * ease;
+      currentY += (targetY - currentY) * ease;
+
+      bg.style.transform = `translate3d(${-currentX * 0.4}px, ${-currentY * 0.4}px, 0)`;
+      if (mist) {
+        mist.style.transform = `translate3d(${-currentX * 0.15}px, ${-currentY * 0.15}px, 0)`;
+      }
+      fg.style.transform = `translate3d(${currentX * 0.9}px, ${currentY * 0.9}px, 0)`;
+      if (content) {
+        content.style.transform = `translate3d(${currentX * 0.25}px, ${currentY * 0.25}px, 0)`;
+      }
+
+      animationFrameId = requestAnimationFrame(updateParallax);
+    }
+
+    let isVisible = true;
+    let animationFrameId = null;
+
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          isVisible = entry.isIntersecting;
+          if (isVisible) {
+            if (!animationFrameId) updateParallax();
+          } else {
+            if (animationFrameId) {
+              cancelAnimationFrame(animationFrameId);
+              animationFrameId = null;
+            }
+          }
+        });
+      }, { threshold: 0.1 });
+      observer.observe(hero);
+    } else {
+      updateParallax();
+    }
+  }
+
   initBranchVideoPlay();
   initBackgroundAudio();
   initFireflies();
+  init3DParallax();
 
 })();

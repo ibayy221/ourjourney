@@ -149,9 +149,43 @@ a { color: inherit; text-decoration: none; }
   padding: 120px 24px 80px;
   position: relative;
   overflow: hidden;
-  background-image: linear-gradient(to bottom, rgba(10, 12, 8, 0.65) 0%, rgba(10, 12, 8, 0.25) 60%, var(--bg) 100%), url('../images/hero-bg.jpg');
+  background-color: var(--bg);
+}
+
+.hero__parallax-bg,
+.hero__parallax-mist,
+.hero__parallax-fg {
+  position: absolute;
+  top: -12%;
+  left: -12%;
+  width: 124%;
+  height: 124%;
+  pointer-events: none;
   background-size: cover;
   background-position: center;
+  will-change: transform;
+}
+
+.hero__parallax-bg {
+  background-image: url('../images/hero-bg.jpg');
+  z-index: 0;
+}
+
+.hero__parallax-mist {
+  background: linear-gradient(to bottom, rgba(10, 12, 8, 0.65) 0%, rgba(10, 12, 8, 0.25) 60%, var(--bg) 100%);
+  z-index: 1;
+}
+
+.hero__parallax-fg {
+  background-image: url('../images/foreground-leaves.png');
+  z-index: 2;
+}
+
+.hero__content {
+  position: relative;
+  z-index: 3;
+  pointer-events: auto;
+  will-change: transform;
 }
 
 .hero__bg-petals {
