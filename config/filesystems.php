@@ -53,7 +53,7 @@ return [
             'secret' => env('SUPABASE_SECRET_ACCESS_KEY', env('AWS_SECRET_ACCESS_KEY')),
             'region' => env('SUPABASE_DEFAULT_REGION', env('AWS_DEFAULT_REGION')),
             'bucket' => env('SUPABASE_BUCKET', env('AWS_BUCKET')),
-            'url' => env('SUPABASE_URL', env('AWS_URL')),
+            'url' => env('SUPABASE_URL', env('SUPABASE_ENDPOINT') ? ('https://' . explode('.', parse_url(env('SUPABASE_ENDPOINT'), PHP_URL_HOST))[0] . '.supabase.co/storage/v1/object/public/' . env('SUPABASE_BUCKET', 'memories')) : env('AWS_URL')),
             'endpoint' => env('SUPABASE_ENDPOINT', env('AWS_ENDPOINT')),
             'use_path_style_endpoint' => env('SUPABASE_USE_PATH_STYLE_ENDPOINT', env('AWS_USE_PATH_STYLE_ENDPOINT', false)),
             'throw' => true,
