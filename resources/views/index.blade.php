@@ -9,7 +9,7 @@
 
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
     {{-- Public CSS (design tokens + animations) --}}
-    <link rel="stylesheet" href="{{ asset('css/public.css') }}?v=1.0.8">
+    <link rel="stylesheet" href="{{ asset('css/public.css') }}?v=1.0.9">
 
     {{-- GSAP 3 + ScrollTrigger via CDN --}}
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
@@ -91,7 +91,7 @@
                      C93,160 101,135 100,110
                      C99,85 98,55 100,30"
                   fill="none"
-                  stroke="#435A3C"
+                  stroke="var(--green-soft)"
                   stroke-width="4.5"
                   stroke-linecap="round"
                   stroke-linejoin="round"/>

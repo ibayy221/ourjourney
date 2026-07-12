@@ -5,26 +5,26 @@
 
 /* ── Design Tokens ─────────────────────────────────────────── */
 :root {
-  --bg:          #F6F8F1;
-  --ink:         #2B2E27;
-  --ink-muted:   #6B7063;
-  --green-deep:  #435A3C;
-  --green-soft:  #8FA283;
-  --green-pale:  #D4DFD0;
-  --bloom:       #C97B84;
-  --bloom-pale:  #F2DDE0;
-  --gold:        #C7A15A;
-  --gold-pale:   #F5EDD7;
-  --white:       #FFFFFF;
-  --surface:     rgba(255,255,255,0.72);
+  --bg:          #111610; /* Very dark moss forest background */
+  --ink:         #F3F5F0; /* Off-white for clean high-contrast text */
+  --ink-muted:   #8FA283; /* Soft sage green for secondary/muted text */
+  --green-deep:  #A4B39D; /* Light desaturated green for borders/accents */
+  --green-soft:  #6D8262; /* Mid tone forest green */
+  --green-pale:  #1B2418; /* Dark green for card background surfaces */
+  --bloom:       #E5C07B; /* Primary Gold accent (replacing Pink) */
+  --bloom-pale:  #362E1D; /* Dark gold-tinted surface for hover pills */
+  --gold:        #E5C07B; /* Gold accent */
+  --gold-pale:   #FAF4E7; /* Light gold-white */
+  --white:       #172015; /* Dark background surface for input fields/cards */
+  --surface:     rgba(20, 27, 19, 0.78); /* Semi-transparent dark green surface */
 
   --radius-sm:   8px;
   --radius-md:   16px;
   --radius-lg:   28px;
 
-  --shadow-soft: 0 4px 24px rgba(43,46,39,0.08);
-  --shadow-card: 0 8px 40px rgba(43,46,39,0.12);
-  --shadow-glow: 0 0 32px rgba(201,123,132,0.18);
+  --shadow-soft: 0 4px 24px rgba(10,12,8,0.3);
+  --shadow-card: 0 8px 40px rgba(10,12,8,0.45);
+  --shadow-glow: 0 0 32px rgba(229,192,123,0.18);
 }
 
 /* ── Typography ────────────────────────────────────────────── */
@@ -74,10 +74,10 @@ a { color: inherit; text-decoration: none; }
   align-items: center;
   justify-content: space-between;
   padding: 16px 32px;
-  background: rgba(246,248,241,0.85);
+  background: rgba(17, 22, 16, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(143,162,131,0.15);
+  border-bottom: 1px solid rgba(229, 192, 123, 0.12);
   transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -135,7 +135,7 @@ a { color: inherit; text-decoration: none; }
 
 .pub-nav__links a:hover,
 .pub-nav__links a.active {
-  color: var(--green-deep);
+  color: var(--bloom);
 }
 
 /* ── Hero Section ──────────────────────────────────────────── */
