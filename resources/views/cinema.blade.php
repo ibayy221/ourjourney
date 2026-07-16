@@ -22,7 +22,7 @@
      NAV
      ══════════════════════════════════════════════════════════════ --}}
 <nav class="pub-nav" role="navigation" aria-label="Navigasi utama">
-    <a href="/" class="pub-nav__brand">Putri Daun <span>&amp;</span> Ubay</a>
+    <a href="/admin" class="pub-nav__brand">Putri Daun <span>&amp;</span> Ubay</a>
     <ul class="pub-nav__links">
         <li><a href="/">Perjalanan</a></li>
         <li><a href="/gallery">Galeri</a></li>
