@@ -167,6 +167,11 @@
                 <path d="M10 18 C10 18 10 12 10 8 C10 4 14 1 18 2 C18 6 14 9 10 8" fill="#8FA283" opacity="0.9"/>
                 <path d="M10 18 C10 18 10 12 10 8 C10 4 6 1 2 2 C2 6 6 9 10 8" fill="#C97B84" opacity="0.7"/>
             </svg>
+
+            {{-- Floating Love Note Tooltip --}}
+            <div id="sprout-tooltip" class="sprout-tooltip">
+                <span id="sprout-tooltip-text">Awal kisah kita yang manis... 🌱</span>
+            </div>
         </div>
     </div>
 

@@ -83,6 +83,17 @@
       ease: 'none',
     });
 
+    let currentMsgIndex = -1;
+    const loveNotes = [
+      { max: 0.15, text: "Awal kisah kita yang manis... 🌱" },
+      { max: 0.30, text: "Setiap detik bersamamu berharga... ✨" },
+      { max: 0.45, text: "Melangkah bersama dalam cinta... 👩‍❤️‍👨" },
+      { max: 0.60, text: "Saling melengkapi satu sama lain... 🧩" },
+      { max: 0.75, text: "Melalui rintangan bersama-sama... 💪" },
+      { max: 0.90, text: "Masa depan indah menanti kita... 🌅" },
+      { max: 1.01, text: "Hingga selamanya dan seterusnya... 💖" }
+    ];
+
     // Track sprout tip at current draw progress
     ScrollTrigger.create({
       trigger: treeSection,
@@ -107,6 +118,35 @@
           opacity: progress > 0.02 ? 1 : 0,
           scale: 0.5 + progress * 0.8,
         });
+
+        // Update Floating Love Notes Tooltip
+        const tooltip = document.getElementById('sprout-tooltip');
+        const tooltipText = document.getElementById('sprout-tooltip-text');
+
+        if (tooltip && tooltipText) {
+          let activeIndex = -1;
+          if (progress > 0.02 && progress < 0.98) {
+            activeIndex = loveNotes.findIndex(note => progress < note.max);
+          }
+
+          if (activeIndex !== -1) {
+            tooltip.classList.add('is-visible');
+
+            if (activeIndex !== currentMsgIndex) {
+              currentMsgIndex = activeIndex;
+              // Animate note text transition with GSAP
+              gsap.killTweensOf(tooltipText);
+              gsap.timeline()
+                .to(tooltipText, { opacity: 0, y: -5, duration: 0.15, onComplete: () => {
+                  tooltipText.innerText = loveNotes[activeIndex].text;
+                }})
+                .to(tooltipText, { opacity: 1, y: 0, duration: 0.25, ease: "power2.out" });
+            }
+          } else {
+            tooltip.classList.remove('is-visible');
+            currentMsgIndex = -1;
+          }
+        }
       },
     });
   } else if (trunkPath && prefersReduced) {
