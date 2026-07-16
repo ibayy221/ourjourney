@@ -412,7 +412,7 @@
 
 {{-- Floating Music Controller --}}
 <div class="music-ctrl" id="music-ctrl" aria-label="Kontrol musik latar">
-    <button class="music-ctrl__btn" id="music-btn" title="Mute/Unmute Suasana Hutan">
+    <button class="music-ctrl__btn" id="music-btn" title="Mute/Unmute Lagu Up">
         <!-- Sound Wave Bars (Animates when playing) -->
         <span class="music-ctrl__wave">
             <span class="bar"></span>
@@ -427,7 +427,7 @@
         </svg>
     </button>
     <audio id="bg-audio" loop preload="auto">
-        <source src="{{ asset('audio/piano-ambient.mp3') }}" type="audio/mpeg">
+        <source src="{{ asset('audio/up-theme.m4a') }}" type="audio/mp4">
     </audio>
 </div>
 
