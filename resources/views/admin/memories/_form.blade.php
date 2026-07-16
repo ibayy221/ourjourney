@@ -54,6 +54,20 @@
         showChapter() { return this.section === 'milestone' || this.section === 'branch'; },
         showDate()    { return this.section === 'milestone'; },
 
+        getFileIndex(item) {
+            if (item.type !== 'file') return -1;
+            let fileIdx = 0;
+            for (let i = 0; i < this.mediaList.length; i++) {
+                if (this.mediaList[i] === item) {
+                    return fileIdx;
+                }
+                if (this.mediaList[i].type === 'file') {
+                    fileIdx++;
+                }
+            }
+            return -1;
+        },
+
         init() {
             // Load dari data-attributes
             const el = this.$el;
@@ -214,7 +228,7 @@
                         <input type="hidden" name="media_types[]" :value="item.type">
                         <input type="hidden" name="media_urls[]" :value="item.url">
                         <input type="hidden" name="media_direct_types[]" :value="item.directType">
-                        <input type="hidden" name="media_file_indices[]" :value="index">
+                        <input type="hidden" name="media_file_indices[]" :value="getFileIndex(item)">
 
                         {{-- Media Thumbnail Preview --}}
                         <div class="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 flex items-center justify-center border border-gray-100">
